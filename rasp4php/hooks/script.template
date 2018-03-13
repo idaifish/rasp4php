@@ -1,0 +1,15 @@
+{
+  onEnter: function (args) {
+      var message = {
+          function: "",
+          args : [],
+          filename: "",
+          lineno: -1
+      };
+
+    send(message);
+  },
+  onLeave: function (retval) {
+
+  }
+}
