@@ -1,9 +1,12 @@
+import logging
 from threading import Thread
 
 import frida
 
-from log import logger
 from json import loads
+
+
+logger = logging.getLogger('rasp4php')
 
 
 class HookThread(Thread):
@@ -13,29 +16,23 @@ class HookThread(Thread):
     def __init__(self, worker_pid, hooks, message_queue):
         super().__init__()
         self.worker_pid = worker_pid
-        self.name = "HookThread-" + str(worker_pid)
+        self.name = "HookThread-{}".format(str(worker_pid))
         self.hooks = hooks
         self.message_queue = message_queue
         self.session = None
 
-    def callback(self, message, data):
-        if message['type'] == 'send':
-            self.message_queue.put(message['payload'])
-        elif message['type'] == 'error':
-            logger.error(message['stack'])
-
     def run(self):
         try:
-            logger.info("Starting to hook php-fpm worker: " + str(self.worker_pid))
+            logger.info("Starting to hook php-fpm worker: {}".format(str(self.worker_pid)))
             self.session = frida.attach(self.worker_pid)
 
             if self.session:
-                logger.info("PHP-FPM Worker:" + str(self.worker_pid) + " is attached")
+                logger.info("PHP-FPM Worker: {} is attached".format(str(self.worker_pid)))
         except Exception as e:
             logger.exception(e)
 
         for hook_name in self.hooks:
-            logger.debug("Setting hook '" + hook_name + "' for " + self.name)
+            logger.debug("Setting hook '{}' for {}".format(hook_name, self.name))
 
             with open(hook_name) as hook_script:
                 func_name = hook_name.split('/')[-1].strip('.js')
@@ -44,7 +41,7 @@ class HookThread(Thread):
                 Interceptor.attach(Module.findExportByName(null, '{func_name}'), {hook_script});
                 """.format(func_name=func_name, hook_script=hook_script.read())
                 script = self.session.create_script(hook)
-                script.on('message', self.callback)
+                script.on('message', lambda message, data: self.message_queue.put(message))
                 script.load()
 
 
@@ -63,7 +60,7 @@ class NotificationThread(Thread):
         while True:
             message = self.message_queue.get()
 
-            if isinstance(message, str):
-                logger.debug(message)
-            else:
-                logger.warning(message)
+            if message['type'] == 'send':
+                logger.debug(message['payload'])
+            elif message['type'] == 'error':
+                logger.error(message['stack'])

@@ -1,9 +1,8 @@
-import logging.config
+from core.const import *
 
-import coloredlogs
+VERSION = 0.1
 
-
-CONFIG = {
+LOGGING = {
     "version": 1,
     "formatters": {
         "default": {
@@ -23,22 +22,27 @@ CONFIG = {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "INFO",
             "filename": "/tmp/rasp4php.log",
+            "formatter": "default",
             "maxBytes": 4096
         }
     },
     "loggers": {
         "rasp4php": {
-            "handlers": ["develop",],
+            "handlers": ["develop","production"],
             "level": "DEBUG"
         }
     }
 }
 
-
-logging.config.dictConfig(CONFIG)
-logger = logging.getLogger("rasp4php")
-coloredlogs.install(
-    level='DEBUG',
-    logger=logger,
-    fmt = '%(asctime)s %(levelname)-8s [%(name)s:%(threadName)s] %(message)s'
+# Enabled Features
+FEATURES = (
+    CODE_EXECUTION,
+    CMD_EXECUTION,
+    # FILE_UPLOAD,
+    # FILE_INCLUSION,
+    # FILE_READ_WRITE,
+    # SSRF,
+    # INFO_LEAKING,
+    # SQL_INJECTION,
+    # DESERIALIZATION,
 )

@@ -1,32 +1,65 @@
 #!/usr/bin/env python3
 
+import logging.config
 from sys import exit
-from glob import glob
 from time import sleep
 from queue import Queue
+from itertools import chain
+from pathlib import Path
 
-import fpm
-import thread
-from log import logger
+import coloredlogs
+
+import settings
+from core.fpm import fpm
+from core.thread import HookThread, NotificationThread
 
 
 # Global MQ
 message_queue = Queue()
 
-def main():
-    if not fpm.is_alive():
+
+# Logging
+logging.config.dictConfig(settings.LOGGING)
+logger = logging.getLogger('rasp4php')
+coloredlogs.install(
+    level='DEBUG',
+    logger=logger,
+    fmt = '%(asctime)s %(levelname)-8s [%(name)s:%(threadName)s] %(message)s'
+)
+
+
+def init():
+    logger.info("Checking whether the php-fpm is running . . .")
+
+    if not fpm.is_running():
         logger.error("php-fpm is not running")
         exit(-1)
+    logger.info("OK, php-fpm is running")
 
+    # Check FPM configuration
+    # TODO
+
+
+def set_hooks():
     fpm_workers = fpm.get_current_workers()
-    fpm_version = fpm.get_version()
-    hooks = glob("hooks/" + fpm_version + "/*.js")
+    fpm_version = fpm.version
 
+    # Check settings
+    hook_script_dir = Path('./core/hooks')
+    hooks = []
+    enabled_hooks = chain.from_iterable(settings.FEATURES)
+    hooks = [str(hook_script_dir / fpm_version / (hook+".js")) for hook in enabled_hooks]
+
+    NotificationThread(message_queue).start()
     for worker_pid in fpm_workers:
-        thread.HookThread(worker_pid, hooks, message_queue).start()
+        HookThread(worker_pid, hooks, message_queue).start()
         sleep(1)
 
-    thread.NotificationThread(message_queue).start()
+
+def main():
+    logger.info("RASP4PHP is starting.")
+    init()
+    set_hooks()
 
 
 if __name__ == '__main__':

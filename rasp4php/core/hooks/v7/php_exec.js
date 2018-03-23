@@ -40,6 +40,6 @@
       send(message);
     },
 
-    onLeave: function (retval) {
-    }
+    // onLeave: function (retval) {
+    // }
 }
