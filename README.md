@@ -14,3 +14,8 @@ $ pipenv install
 ## Asciinema
 
 [![asciicast](https://asciinema.org/a/169232.png)](https://asciinema.org/a/169232)
+
+
+## Restriction
+
+PHP-FPM's process manager must be static.

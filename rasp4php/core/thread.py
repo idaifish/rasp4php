@@ -13,13 +13,14 @@ class HookThread(Thread):
     """Hook PHP-FPM workers.
     """
 
-    def __init__(self, worker_pid, hooks, message_queue):
+    def __init__(self, worker_pid, hooks, message_queue, detach_event):
         super().__init__()
         self.worker_pid = worker_pid
         self.name = "HookThread-{}".format(str(worker_pid))
         self.hooks = hooks
         self.message_queue = message_queue
         self.session = None
+        self.detach_event = detach_event
 
     def run(self):
         try:
@@ -37,12 +38,16 @@ class HookThread(Thread):
             with open(hook_name) as hook_script:
                 func_name = hook_name.split('/')[-1].strip('.js')
                 hook = """
-                send("Function {func_name} is hooked successfully");
                 Interceptor.attach(Module.findExportByName(null, '{func_name}'), {hook_script});
-                """.format(func_name=func_name, hook_script=hook_script.read())
+                send("HookThread-{worker_pid}: Function {func_name} is hooked successfully");
+                """.format(func_name=func_name, hook_script=hook_script.read(), worker_pid=self.worker_pid)
                 script = self.session.create_script(hook)
                 script.on('message', lambda message, data: self.message_queue.put(message))
                 script.load()
+
+        self.detach_event.wait()
+        logger.info("PHP-FPM Worker: {} is detached".format(str(self.worker_pid)))
+        self.session.detach()
 
 
 class NotificationThread(Thread):
@@ -61,6 +66,9 @@ class NotificationThread(Thread):
             message = self.message_queue.get()
 
             if message['type'] == 'send':
-                logger.debug(message['payload'])
+                if isinstance(message['payload'], str):
+                    logger.debug(message['payload'])
+                else:
+                    logger.warning(message['payload'])
             elif message['type'] == 'error':
                 logger.error(message['stack'])
