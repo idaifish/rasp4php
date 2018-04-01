@@ -27,11 +27,12 @@ detach_event = Event()
 # Logging
 logging.config.dictConfig(settings.LOGGING)
 logger = logging.getLogger('rasp4php')
-coloredlogs.install(
-    level='DEBUG',
-    logger=logger,
-    fmt = '%(asctime)s %(levelname)-8s [%(name)s:%(threadName)s] %(message)s'
-)
+if settings.DEBUG:
+    coloredlogs.install(
+        level='DEBUG',
+        logger=logger,
+        fmt = '%(asctime)s %(levelname)-8s [%(name)s:%(threadName)s] %(message)s'
+    )
 
 
 def exit_callback(signum, frame):
@@ -58,7 +59,8 @@ def set_hooks():
 
     # Check settings
     hook_script_dir = Path('./core/hooks')
-    enabled_hooks = chain.from_iterable(settings.FEATURES)
+    features = [ set(f.values()) for f in settings.FEATURES]
+    enabled_hooks = chain.from_iterable(features)
     hooks = [str(hook_script_dir / fpm_version / (hook+".js")) for hook in enabled_hooks]
 
     # Start threads

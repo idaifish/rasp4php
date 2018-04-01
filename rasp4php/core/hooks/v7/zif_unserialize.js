@@ -1,8 +1,8 @@
 {
   onEnter: function (args) {
     var message = {
-        function: "",
-        args : [],
+        function: "unserialize",
+        args : [''],
         filename: "",
         lineno: -1
     };
@@ -14,7 +14,6 @@
 
     message.filename = Memory.readCString(ptr(getFilename()));
     message.lineno = getLineno();
-
     send(message);
   },
   /* onLeave: function (retval) {

@@ -1,6 +1,7 @@
-from core.const import *
+from core.hooks import *
 
 VERSION = 0.1
+DEBUG = True
 
 LOGGING = {
     "version": 1,
@@ -29,7 +30,7 @@ LOGGING = {
     "loggers": {
         "rasp4php": {
             "handlers": ["develop","production"],
-            "level": "DEBUG"
+            "level": "INFO"
         }
     }
 }
@@ -38,11 +39,11 @@ LOGGING = {
 FEATURES = (
     CODE_EXECUTION,
     COMMAND_EXECUTION,
-    # FILE_UPLOAD,
+    FILE_UPLOAD,
     # FILE_INCLUSION,
     # FILE_READ_WRITE,
     # SSRF,
     INFO_LEAKING,
     # SQL_INJECTION,
-    # DESERIALIZATION,
+    DESERIALIZATION,
 )
