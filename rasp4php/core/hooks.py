@@ -12,17 +12,12 @@ COMMAND_EXECUTION = {
     'shell_exec': 'zif_shell_exec',
 }
 
-FILE_INCLUSION = {
-    'include': 'compile_file',
-    'include_once': 'compile_file',
-    'require': 'compile_file',
-    'require': 'compile_file',
+FILE_OPERATION = {
+    # file inclusion,  file_read_write
+    'include*': 'php_resolve_path',
+    'require*': 'php_resolve_path',
+    'file_*': 'php_stream_locate_url_wrapper',
 }
-
-FILE_READ_WRITE = (
-    # scandir, file_get_contents, file_put_contents, dir, opendir, file, readfile, fopen, copy,
-    # 'zif_scandir',
-)
 
 FILE_UPLOAD = {
     'move_uploaded_file': 'zif_move_uploaded_file'
