@@ -6,8 +6,6 @@ Runtime Application Self-Protection for PHP, based on [Frida](https://www.frida.
 # Installation
 
 ```bash
-# sudo sysctl -w kernel.yama.ptrace_scope=0
-# sudo sysctl -p
 $ pipenv install
 ```
 
@@ -18,4 +16,4 @@ $ pipenv install
 
 ## Restriction
 
-PHP-FPM's process manager must be static.
+PHP-FPM's process manager must be "static".

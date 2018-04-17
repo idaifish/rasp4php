@@ -18,7 +18,9 @@
     message.filename = Memory.readCString(ptr(getFilename()));
     message.lineno = getLineno();
 
-    send(message);
+    if (message.filename !== '[no active file]') {
+      send(message);
+    }
   },
   /* onLeave: function (retval) {
       // Omit onLeave Callback

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import signal
+import argparse
 import logging.config
 from threading import Event
 from sys import exit
@@ -27,12 +28,6 @@ detach_event = Event()
 # Logging
 logging.config.dictConfig(settings.LOGGING)
 logger = logging.getLogger('rasp4php')
-if settings.DEBUG:
-    coloredlogs.install(
-        level='DEBUG',
-        logger=logger,
-        fmt = '%(asctime)s %(levelname)-8s [%(name)s:%(threadName)s] %(message)s'
-    )
 
 
 def exit_callback(signum, frame):
@@ -41,25 +36,24 @@ def exit_callback(signum, frame):
     exit(0)
 
 
-def init():
-    logger.info("Checking whether the php-fpm is running . . .")
+def bootstrap():
+    logger.info("RASP4PHP is starting.")
 
+    logger.info("Checking whether the php-fpm is running . . .")
     if not fpm.is_running():
         logger.error("php-fpm is not running")
         exit(-1)
     logger.info("OK, php-fpm is running")
 
-    # Check FPM configuration
-    # TODO
-
 
 def set_hooks():
     fpm_workers = fpm.get_current_workers()
     fpm_version = fpm.version
+    fpm_modules = fpm.get_modules()
 
     # Check settings
     hook_script_dir = Path('./core/hooks')
-    features = [ set(f.values()) for f in settings.FEATURES]
+    features = [ set(f['hooks'].values()) for f in settings.FEATURES ]
     enabled_hooks = chain.from_iterable(features)
     hooks = [str(hook_script_dir / fpm_version / (hook+".js")) for hook in enabled_hooks]
 
@@ -72,12 +66,27 @@ def set_hooks():
 
 
 def main():
-    logger.info("RASP4PHP is starting.")
-    signal.signal(signal.SIGINT, exit_callback)
+    bootstrap()
 
-    init()
+    # Signal
+    signal.signal(signal.SIGINT, exit_callback)
+    signal.signal(signal.SIGTERM, exit_callback)
+
     set_hooks()
 
 
 if __name__ == '__main__':
+    argparser = argparse.ArgumentParser(prog="rasp4php", description="RASP for PHP")
+    argparser.add_argument('-v', '--version', action='version', help="Version number.", version='%(prog)s {}'.format(settings.VERSION))
+    argparser.add_argument('--debug', action='store_true', help="Debug Mode.")
+
+    args = argparser.parse_args()
+
+    if args.debug:
+        coloredlogs.install(
+            level='DEBUG',
+            logger=logger,
+            fmt = '%(asctime)s %(levelname)-8s [%(name)s:%(threadName)s] %(message)s'
+        )
+
     main()

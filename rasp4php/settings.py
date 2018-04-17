@@ -1,7 +1,10 @@
 from core.hooks import *
 
-VERSION = 0.1
-DEBUG = True
+VERSION = 'v0.1'
+
+# Graylog
+GRAYLOG_HOST = '127.0.0.1'
+GRAYLOG_PORT = 12201
 
 LOGGING = {
     "version": 1,
@@ -21,15 +24,22 @@ LOGGING = {
         },
         "production": {
             "class": "logging.handlers.RotatingFileHandler",
-            "level": "INFO",
+            "level": "DEBUG",
             "filename": "/tmp/rasp4php.log",
             "formatter": "default",
             "maxBytes": 4096
-        }
+        },
+        "graylog": {
+            "class": "graypy.GELFHandler",
+            "level": "CRITICAL",
+            "host": GRAYLOG_HOST,
+            "port": GRAYLOG_PORT,
+            "debugging_fields": False
+        },
     },
     "loggers": {
         "rasp4php": {
-            "handlers": ["develop","production"],
+            "handlers": ["develop", "production", "graylog"],
             "level": "INFO"
         }
     }

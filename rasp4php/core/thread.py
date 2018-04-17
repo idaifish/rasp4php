@@ -3,7 +3,7 @@ from threading import Thread
 
 import frida
 
-from json import loads
+from json import dumps
 
 
 logger = logging.getLogger('rasp4php')
@@ -69,6 +69,6 @@ class NotificationThread(Thread):
                 if isinstance(message['payload'], str):
                     logger.debug(message['payload'])
                 else:
-                    logger.warning(message['payload'])
+                    logger.critical(dumps(message['payload']))
             elif message['type'] == 'error':
-                logger.error(message['stack'])
+                logger.debug(message['stack'])

@@ -1,4 +1,5 @@
 from subprocess import check_output, CalledProcessError
+from re import findall
 
 
 class FPM(object):
@@ -21,6 +22,16 @@ class FPM(object):
         try:
             output = check_output("/usr/sbin/php-fpm* -v", shell=True).decode()
             return 'v' + output.split("\n")[0][:5][-1]     # '5' / '7'
+        except CalledProcessError as e:
+            return ''
+
+    def get_modules(self):
+        """return php modules
+        """
+        try:
+            output = check_output("/usr/sbin/php-fpm* -m", shell=True).decode()
+            output = output.split('\n\n')[0].split('\n')
+            return filter(lambda x: x!='' and not x.startswith('['), output)
         except CalledProcessError as e:
             return ''
 
