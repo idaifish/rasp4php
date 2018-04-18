@@ -1,18 +1,23 @@
 # RASP4PHP
 
-Runtime Application Self-Protection for PHP, based on [Frida](https://www.frida.re). (DEMO)
+Runtime Application Self-Protection for PHP, based on [Frida](https://www.frida.re), mostly used as a sensor for SIEM.
 
 
-# Installation
+## Usage
 
 ```bash
 $ pipenv install
+# pipenv shell
+# sudo `which python` ./main.py --debug
 ```
 
-## Asciinema
+## Graylog Support
 
-[![asciicast](https://asciinema.org/a/169232.png)](https://asciinema.org/a/169232)
-
+```
+# GELF UDP
+GRAYLOG_HOST = '127.0.0.1'
+GRAYLOG_PORT = 12201
+```
 
 ## Restriction
 

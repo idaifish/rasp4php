@@ -1,65 +1,43 @@
 CODE_EXECUTION = {
-    'depends': [],
-    'hooks': {
-        'eval': 'compile_string',
-        'assert': 'compile_string',
-        'create_function': 'compile_string',
-    }
+    'eval': {'hook':'compile_string', 'depends': set()},
+    'assert': {'hook':'compile_string', 'depends': set()},
+    'create_function': {'hook':'compile_string', 'depends': set()}
 }
 
 COMMAND_EXECUTION = {
-    'depends': [],
-    'hooks': {
-        # TODO: pcntl_exec
-        'exec': 'php_exec',
-        'proc_open': 'zif_proc_open',
-        'shell_exec': 'zif_shell_exec',
-    }
+    # TODO: pcntl_exec
+    'exec': {'hook':'php_exec', 'depends': set()},
+    'proc_open': {'hook':'zif_proc_open', 'depends': set()},
+    'shell_exec': {'hook':'zif_shell_exec', 'depends': set()},
 }
 
 FILE_OPERATION = {
-    'depends': [],
-    'hooks': {
-        # file inclusion,  file_read_write
-        'include*': 'php_resolve_path',
-        'require*': 'php_resolve_path',
-        'file_*': 'php_stream_locate_url_wrapper',
-    }
+    # file inclusion,  file_read_write
+    'include*': {'hook':'php_resolve_path', 'depends': set()},
+    'require*': {'hook':'php_resolve_path', 'depends': set()},
+    'file_*': {'hook':'php_stream_locate_url_wrapper', 'depends': set()}
 }
 
 FILE_UPLOAD = {
-    'depends': [],
-    'hooks': {
-        'move_uploaded_file': 'zif_move_uploaded_file'
-    }
+    'move_uploaded_file': {'hook':'zif_move_uploaded_file', 'depends': set()}
 }
 
 SQL_INJECTION = {
-    'depends': ['PDO', 'pdo-mysql', 'pdo-sqlite', 'mysqli', 'mysqlnd'],
-    'hooks': {
-        # mysqli->query etc.
-    }
+    #'depends': set(['PDO', 'pdo-mysql', 'pdo-sqlite', 'mysqli', 'mysqlnd'])
 }
 
 DESERIALIZATION = {
-    'depends': [],
-    'hooks': {
-        'unserialize': 'zif_unserialize'
-    }
+    'unserialize': {'hook':'zif_unserialize', 'depends': set()}
 }
 
 SSRF = {
-    'depends': ['curl', ],
-    'hooks': {
-        'curl_*': 'php_curl_option_str'
-    }
+    'curl_setopt': {'hook':'curl_easy_setopt', 'depends': set(['curl',])},
+    'curl_multi_setopt': {'hook':'curl_multi_setopt', 'depends': set(['curl',])},
+    'curl_share_setopt': {'hook':'curl_share_setopt', 'depends': set(['curl',])}
 }
 
 INFO_LEAKING = {
-    'depends': [],
-    'hooks': {
-        # TODO: getcwd, get_current_user, getmypid, posix_get* etc.
-        'phpinfo': 'zif_phpinfo',
-        'getenv': 'zif_getenv',
-    }
+    # TODO: getcwd, get_current_user, getmypid, posix_get* etc.
+    'phpinfo': {'hook':'zif_phpinfo', 'depends': set()},
+    'getenv': {'hook':'zif_getenv', 'depends': set()}
 }

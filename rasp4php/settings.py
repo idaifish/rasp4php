@@ -2,7 +2,7 @@ from core.hooks import *
 
 VERSION = 'v0.1'
 
-# Graylog
+# Graylog GELF UDP
 GRAYLOG_HOST = '127.0.0.1'
 GRAYLOG_PORT = 12201
 
@@ -51,7 +51,7 @@ FEATURES = (
     COMMAND_EXECUTION,
     FILE_UPLOAD,
     FILE_OPERATION,
-    # SSRF,
+    SSRF,
     INFO_LEAKING,
     # SQL_INJECTION,
     DESERIALIZATION,

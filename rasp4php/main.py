@@ -50,12 +50,16 @@ def set_hooks():
     fpm_workers = fpm.get_current_workers()
     fpm_version = fpm.version
     fpm_modules = fpm.get_modules()
+    fpm_modules_set = set(fpm_modules)
 
     # Check settings
     hook_script_dir = Path('./core/hooks')
-    features = [ set(f['hooks'].values()) for f in settings.FEATURES ]
-    enabled_hooks = chain.from_iterable(features)
-    hooks = [str(hook_script_dir / fpm_version / (hook+".js")) for hook in enabled_hooks]
+    hook_funcs = []
+    for f in settings.FEATURES:
+        for k,v in f.items():
+            if v['depends'].issubset(fpm_modules_set):
+                hook_funcs.append(v['hook'])
+    hooks = [str(hook_script_dir / fpm_version / (hook + ".js")) for hook in set(hook_funcs)]
 
     # Start threads
     NotificationThread(message_queue).start()
