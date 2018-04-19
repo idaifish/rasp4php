@@ -1,7 +1,7 @@
 {
   onEnter: function (args) {
     var message = {
-        function: "php_resolve_path",
+        function: "include_or_require",
         args : [],
         filename: "",
         lineno: -1

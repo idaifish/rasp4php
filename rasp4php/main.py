@@ -52,8 +52,7 @@ def set_hooks():
     fpm_modules = fpm.get_modules()
     fpm_modules_set = set(fpm_modules)
 
-    # Check settings
-    hook_script_dir = Path('./core/hooks')
+    hook_script_dir = Path(__file__).parent / 'core/hooks'
     hook_funcs = []
     for f in settings.FEATURES:
         for k,v in f.items():

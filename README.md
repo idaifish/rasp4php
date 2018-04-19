@@ -7,8 +7,9 @@ Runtime Application Self-Protection for PHP, based on [Frida](https://www.frida.
 
 ```bash
 $ pipenv install
-# pipenv shell
-# sudo `which python` ./main.py --debug
+$ pipenv shell
+$ sudo pipenv run rasp4php
+$ sudo pipenv run debug-rasp4php      # Debug
 ```
 
 ## Graylog Support

@@ -1,7 +1,7 @@
 {
   onEnter: function (args) {
     var message = {
-        function: "php_stream_locate_url_wrapper",
+        function: "file_operation",
         args : [],
         filename: "",
         lineno: -1
