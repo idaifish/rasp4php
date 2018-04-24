@@ -20,7 +20,7 @@ class FPM(object):
         """return version of php-fpm
         """
         try:
-            output = check_output("/usr/sbin/php-fpm* -v", shell=True).decode()
+            output = check_output("php -v", shell=True).decode()
             return 'v' + output.split("\n")[0][:5][-1]     # '5' / '7'
         except CalledProcessError as e:
             return ''
@@ -33,7 +33,7 @@ class FPM(object):
             output = output.split('\n\n')[0].split('\n')
             return filter(lambda x: x!='' and not x.startswith('['), output)
         except CalledProcessError as e:
-            return ''
+            return []
 
     def get_master(self):
         try:
