@@ -22,4 +22,8 @@ GRAYLOG_PORT = 12201
 
 ## Restriction
 
-PHP-FPM's process manager must be "static".
+PHP-FPM's process manager should be **static**.
+
+```
+pm = static
+```
