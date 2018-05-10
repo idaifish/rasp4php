@@ -11,7 +11,7 @@
           lineno: -1
         };
     var zendParseParametersAddr = Module.findExportByName(null, 'zend_parse_parameters');
-    var zendParseParameters = new NativeFunction(zendParseParametersAddr, 'pointer', ['int', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer']);
+    var zendParseParameters = new NativeFunction(zendParseParametersAddr, 'int', ['int', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer']);
     var fmt = Memory.allocUtf8String('saz/|s!a!a!');
     var cmd = Memory.alloc(Process.pointerSize);
     var cmdLen = Memory.alloc(Process.pointerSize);
@@ -27,7 +27,7 @@
     var getFilename = new NativeFunction(getFilenameAddr, 'pointer', []);
     var getLineno = new NativeFunction(getLinenoAddr, 'uint32', []);
 
-    zendParseParameters(6, fmt, cmd, cmdLen, descriptorspec, pipes, cwd, cwdLen, environment, otherOptions);
+    zendParseParameters(3, fmt, cmd, cmdLen, descriptorspec, pipes, cwd, cwdLen, environment, otherOptions);
 
     message.filename = Memory.readCString(ptr(getFilename()));
     message.lineno = getLineno();

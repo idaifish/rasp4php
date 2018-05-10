@@ -13,6 +13,7 @@ from pathlib import Path
 import coloredlogs
 
 import settings
+from __version__ import __VERSION__
 from core.fpm import fpm
 from core.thread import HookThread, NotificationThread
 
@@ -43,7 +44,7 @@ def bootstrap():
     if not fpm.is_running():
         logger.error("php-fpm is not running")
         exit(-1)
-    logger.info("OK, php-fpm is running")
+    logger.info("OK, php-fpm {} is running".format(fpm.version))
 
 
 def set_hooks():
@@ -69,18 +70,8 @@ def set_hooks():
 
 
 def main():
-    bootstrap()
-
-    # Signal
-    signal.signal(signal.SIGINT, exit_callback)
-    signal.signal(signal.SIGTERM, exit_callback)
-
-    set_hooks()
-
-
-if __name__ == '__main__':
     argparser = argparse.ArgumentParser(prog="rasp4php", description="RASP for PHP")
-    argparser.add_argument('-v', '--version', action='version', help="Version number.", version='%(prog)s {}'.format(settings.VERSION))
+    argparser.add_argument('-v', '--version', action='version', help="Version number.", version='%(prog)s {}'.format(__VERSION__))
     argparser.add_argument('--debug', action='store_true', help="Debug Mode.")
 
     args = argparser.parse_args()
@@ -92,4 +83,14 @@ if __name__ == '__main__':
             fmt = '%(asctime)s %(levelname)-8s [%(name)s:%(threadName)s] %(message)s'
         )
 
+    bootstrap()
+
+    # Signal
+    signal.signal(signal.SIGINT, exit_callback)
+    signal.signal(signal.SIGTERM, exit_callback)
+
+    set_hooks()
+
+
+if __name__ == '__main__':
     main()

@@ -1,6 +1,5 @@
 from core.hooks import *
 
-VERSION = 'v0.1'
 
 # Graylog GELF UDP
 GRAYLOG_HOST = '127.0.0.1'
