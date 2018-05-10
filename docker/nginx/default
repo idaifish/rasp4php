@@ -1,0 +1,27 @@
+server {
+    listen       80;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm index.php;
+    }
+
+    #error_page  404              /404.html;
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+
+    # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+    #
+    location ~ \.php$ {
+        include        fastcgi_params;
+        fastcgi_pass   rasp4php7:9000;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  /usr/share/nginx/html$fastcgi_script_name;
+        fastcgi_param  SCRIPT_NAME      $fastcgi_script_name;
+    }
+}
