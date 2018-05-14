@@ -2,19 +2,20 @@
 
 import signal
 import argparse
-import logging.config
 from threading import Event
 from sys import exit
 from time import sleep
 from queue import Queue
-from itertools import chain
 from pathlib import Path
+from ipaddress import ip_address
 
 import coloredlogs
+import graypy
 
-import settings
 from __version__ import __VERSION__
 from core.fpm import fpm
+from core.log import logger
+from core.hooks import *
 from core.thread import HookThread, NotificationThread
 
 
@@ -26,9 +27,17 @@ message_queue = Queue()
 detach_event = Event()
 
 
-# Logging
-logging.config.dictConfig(settings.LOGGING)
-logger = logging.getLogger('rasp4php')
+# Enabled Features
+FEATURES = (
+    CODE_EXECUTION,
+    COMMAND_EXECUTION,
+    FILE_UPLOAD,
+    FILE_OPERATION,
+    SSRF,
+    INFO_LEAKING,
+    # SQL_INJECTION,
+    DESERIALIZATION,
+)
 
 
 def exit_callback(signum, frame):
@@ -55,7 +64,7 @@ def set_hooks():
 
     hook_script_dir = Path(__file__).parent / 'core/hooks'
     hook_funcs = []
-    for f in settings.FEATURES:
+    for f in FEATURES:
         for k,v in f.items():
             if v['depends'].issubset(fpm_modules_set):
                 hook_funcs.append(v['hook'])
@@ -71,8 +80,11 @@ def set_hooks():
 
 def main():
     argparser = argparse.ArgumentParser(prog="rasp4php", description="RASP for PHP")
-    argparser.add_argument('-v', '--version', action='version', help="Version number.", version='%(prog)s {}'.format(__VERSION__))
-    argparser.add_argument('--debug', action='store_true', help="Debug Mode.")
+    argparser.add_argument('-v', '--version', action='version', help="Version number", version='%(prog)s {}'.format(__VERSION__))
+    argparser.add_argument('--debug', action='store_true', help="Debug Mode")
+    argparser.add_argument('--graylog', help="Graylog Host")
+    argparser.add_argument('--graylog-port', default=12201, help="Graylog UDP Port(default: 12201)")
+    argparser.add_argument('--graylog-loglevel', default='CRITICAL', help="Graylog Log Level(default: CRITICAL)")
 
     args = argparser.parse_args()
 
@@ -82,6 +94,16 @@ def main():
             logger=logger,
             fmt = '%(asctime)s %(levelname)-8s [%(name)s:%(threadName)s] %(message)s'
         )
+
+    if args.graylog:
+        try:
+            ip_address(args.graylog)
+        except:
+            argparser.error("Invalid IP Address")
+
+        graylog_handler = graypy.GELFHandler(args.graylog, args.graylog_port, debugging_fields=False)
+        graylog_handler.setLevel(args.graylog_loglevel)
+        logger.addHandler(graylog_handler)
 
     bootstrap()
 

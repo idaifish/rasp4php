@@ -1,9 +1,5 @@
-from core.hooks import *
+import logging.config
 
-
-# Graylog GELF UDP
-GRAYLOG_HOST = '127.0.0.1'
-GRAYLOG_PORT = 12201
 
 LOGGING = {
     "version": 1,
@@ -28,30 +24,16 @@ LOGGING = {
             "formatter": "default",
             "maxBytes": 4096
         },
-        "graylog": {
-            "class": "graypy.GELFHandler",
-            "level": "CRITICAL",
-            "host": GRAYLOG_HOST,
-            "port": GRAYLOG_PORT,
-            "debugging_fields": False
-        },
     },
     "loggers": {
         "rasp4php": {
-            "handlers": ["develop", "production", "graylog"],
+            "handlers": ["develop", "production"],
             "level": "INFO"
         }
     }
 }
 
-# Enabled Features
-FEATURES = (
-    CODE_EXECUTION,
-    COMMAND_EXECUTION,
-    FILE_UPLOAD,
-    FILE_OPERATION,
-    SSRF,
-    INFO_LEAKING,
-    # SQL_INJECTION,
-    DESERIALIZATION,
-)
+
+# Global logger
+logging.config.dictConfig(LOGGING)
+logger = logging.getLogger('rasp4php')
