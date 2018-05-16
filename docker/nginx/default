@@ -4,6 +4,12 @@ server {
     location / {
         root   /usr/share/nginx/html;
         index  index.html index.htm index.php;
+
+        # File upload
+        dav_methods  PUT MOVE;
+        create_full_put_path   on;
+        client_max_body_size 100m;
+        dav_access            group:rw  all:r;
     }
 
     #error_page  404              /404.html;

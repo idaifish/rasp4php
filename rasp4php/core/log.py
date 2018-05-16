@@ -36,4 +36,5 @@ LOGGING = {
 
 # Global logger
 logging.config.dictConfig(LOGGING)
+logging.raiseExceptions = False
 logger = logging.getLogger('rasp4php')

@@ -8,6 +8,8 @@ from time import sleep
 from queue import Queue
 from pathlib import Path
 from ipaddress import ip_address
+from logging.handlers import HTTPHandler
+from urllib.parse import urlparse
 
 import coloredlogs
 import graypy
@@ -85,6 +87,8 @@ def main():
     argparser.add_argument('--graylog', help="Graylog Host")
     argparser.add_argument('--graylog-port', default=12201, help="Graylog UDP Port(default: 12201)")
     argparser.add_argument('--graylog-loglevel', default='CRITICAL', help="Graylog Log Level(default: CRITICAL)")
+    argparser.add_argument('--webhook', help="Webhook URL(eg: http://127.0.0.1:8080/webhooks)")
+
 
     args = argparser.parse_args()
 
@@ -104,6 +108,12 @@ def main():
         graylog_handler = graypy.GELFHandler(args.graylog, args.graylog_port, debugging_fields=False)
         graylog_handler.setLevel(args.graylog_loglevel)
         logger.addHandler(graylog_handler)
+
+    if args.webhook:
+        parsed_webhook = urlparse(args.webhook)
+        webhook_handler = HTTPHandler(parsed_webhook.netloc, parsed_webhook.path, method='POST', secure=False, credentials=None, context=None)
+        webhook_handler.setLevel("CRITICAL")
+        logger.addHandler(webhook_handler)
 
     bootstrap()
 
