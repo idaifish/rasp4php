@@ -15,7 +15,9 @@ services:
             - rasp4php7
 
     rasp4php7:
-        build: ./docker/rasp4php
+        build:
+            context: .
+            dockerfile: ./docker/rasp4php/Dockerfile
         container_name: rasp4php7
         networks:
             - rasp4php
