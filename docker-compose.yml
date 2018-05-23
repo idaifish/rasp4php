@@ -2,29 +2,45 @@ version: "2.3"
 
 services:
     nginx:
-        image: nginx
-        container_name: nginx
+        build:
+            context: .
+            dockerfile: ./docker/nginx/Dockerfile
+        container_name: rasp4php_nginx
         ports:
-            - 7000:80
+            - 7777:80
+            - 5555:81
         volumes:
             - ./docker/nginx/default:/etc/nginx/conf.d/default.conf:ro
-            - /tmp/webroot:/usr/share/nginx/html
-        networks:
-            - rasp4php
+            - webroot:/usr/share/nginx/html
         links:
             - rasp4php7
+            - rasp4php5
 
     rasp4php7:
-        build: ./docker/rasp4php
+        build:
+            context: .
+            dockerfile: ./docker/rasp4php/Dockerfile
         container_name: rasp4php7
-        networks:
-            - rasp4php
         volumes:
-            - /tmp/webroot:/usr/share/nginx/html
+            - webroot:/usr/share/nginx/html
         expose:
             - 9000
         cap_add:
             - SYS_PTRACE
+        command: ["sh", "-c", "php-fpm7.0 -D ; python rasp4php/main.py ${RASP4PHP7_OPTION---debug}"]
 
-networks:
-    rasp4php:
+    rasp4php5:
+        build:
+            context: .
+            dockerfile: ./docker/rasp4php/Dockerfile
+        container_name: rasp4php5
+        volumes:
+            - webroot:/usr/share/nginx/html
+        expose:
+            - 9001
+        cap_add:
+            - SYS_PTRACE
+        command: ["sh", "-c", "php-fpm5.6 -D ; python rasp4php/main.py ${RASP4PHP5_OPTION---debug}"]
+
+volumes:
+    webroot:

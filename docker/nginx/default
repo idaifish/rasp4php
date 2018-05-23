@@ -4,6 +4,12 @@ server {
     location / {
         root   /usr/share/nginx/html;
         index  index.html index.htm index.php;
+
+        # File upload
+        dav_methods  PUT;
+        create_full_put_path   on;
+        client_max_body_size 10m;
+        dav_access            group:rw  all:r;
     }
 
     #error_page  404              /404.html;
@@ -19,9 +25,61 @@ server {
     #
     location ~ \.php$ {
         include        fastcgi_params;
-        fastcgi_pass   rasp4php7:9000;
         fastcgi_index  index.php;
         fastcgi_param  SCRIPT_FILENAME  /usr/share/nginx/html$fastcgi_script_name;
         fastcgi_param  SCRIPT_NAME      $fastcgi_script_name;
+        if ($request_method != PUT) {
+            fastcgi_pass   rasp4php7:9000;
+        }
+
+        # File Upload
+        root   /usr/share/nginx/html;
+        dav_methods  PUT;
+        create_full_put_path   on;
+        client_max_body_size 10m;
+        dav_access            group:rw  all:r;
+    }
+}
+
+server {
+    listen       81;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm index.php;
+
+        # File upload
+        dav_methods  PUT;
+        create_full_put_path   on;
+        client_max_body_size 10m;
+        dav_access            group:rw  all:r;
+    }
+
+    #error_page  404              /404.html;
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+
+    # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+    #
+    location ~ \.php$ {
+        include        fastcgi_params;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  /usr/share/nginx/html$fastcgi_script_name;
+        fastcgi_param  SCRIPT_NAME      $fastcgi_script_name;
+        if ($request_method != PUT) {
+            fastcgi_pass   rasp4php5:9001;
+        }
+
+        # File Upload
+        root   /usr/share/nginx/html;
+        dav_methods  PUT;
+        create_full_put_path   on;
+        client_max_body_size 10m;
+        dav_access            group:rw  all:r;
     }
 }

@@ -33,7 +33,9 @@ DESERIALIZATION = {
 SSRF = {
     'curl_setopt': {'hook':'curl_easy_setopt', 'depends': set(['curl',])},
     'curl_multi_setopt': {'hook':'curl_multi_setopt', 'depends': set(['curl',])},
-    'curl_share_setopt': {'hook':'curl_share_setopt', 'depends': set(['curl',])}
+    'curl_share_setopt': {'hook':'curl_share_setopt', 'depends': set(['curl',])},
+    'fsockopen': {'hook':'_php_stream_xport_create', 'depends': set()},
+    'socket_connect': {'hook':'zif_socket_connect', 'depends': set()},
 }
 
 INFO_LEAKING = {

@@ -1,12 +1,9 @@
-import logging
 from threading import Thread
+from json import dumps
 
 import frida
 
-from json import dumps
-
-
-logger = logging.getLogger('rasp4php')
+from .log import logger
 
 
 class HookThread(Thread):
