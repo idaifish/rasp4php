@@ -5,20 +5,31 @@ Runtime Application Self-Protection for PHP, based on [Frida](https://www.frida.
 
 ## Usage
 
+**VM**
+
 ```bash
+# pip install pipenv
 $ pipenv install
 $ pipenv shell
-$ sudo pipenv run rasp4php
-$ sudo pipenv run debug-rasp4php      # Debug
+
+# Console
+$ sudo pipenv run debug-rasp4php
+
+# GELF UDP Output
+$ sudo pipenv run rasp4php --graylog 127.0.0.1 --graylog-port 27017
+
+# Webhook
+$ sudo pipenv run rasp4php --webhook http://127.0.0.1:8080/webhooks
 ```
 
-## Graylog Support
+**Docker**
 
+```bash
+$ export RASP4PHP7_OPTION="--webhook http://127.0.0.1:8080/webhooks"
+$ export RASP4PHP5_OPTION="--graylog 127.0.0.1 --graylog-port 27017"
+$ docker-compose up
 ```
-# GELF UDP
-GRAYLOG_HOST = '127.0.0.1'
-GRAYLOG_PORT = 12201
-```
+
 
 ## Restriction
 
