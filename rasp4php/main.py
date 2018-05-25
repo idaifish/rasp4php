@@ -37,7 +37,7 @@ FEATURES = (
     FILE_OPERATION,
     SSRF,
     INFO_LEAKING,
-    # SQL_INJECTION,
+    SQL_INJECTION,
     DESERIALIZATION,
 )
 
@@ -51,11 +51,11 @@ def exit_callback(signum, frame):
 def bootstrap():
     logger.info("RASP4PHP is starting.")
 
-    logger.info("Checking whether the php-fpm is running . . .")
+    logger.info("Checking whether the PHP-FPM is running . . .")
     if not fpm.is_running():
-        logger.error("php-fpm is not running")
+        logger.error("PHP-FPM is not running")
         exit(-1)
-    logger.info("OK, php-fpm {} is running".format(fpm.version))
+    logger.info("OK, PHP-FPM {} is running".format(fpm.full_version))
 
 
 def set_hooks():
@@ -77,7 +77,7 @@ def set_hooks():
 
     for worker_pid in fpm_workers:
         HookThread(worker_pid, hooks, message_queue, detach_event).start()
-        sleep(1)
+        sleep(0.2)
 
 
 def main():

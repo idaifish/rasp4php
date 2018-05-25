@@ -8,6 +8,7 @@ class FPM(object):
     def __init__(self):
         super().__init__()
         self.version = self.get_version()
+        self.full_version = self.get_full_version()
 
     def is_running(self):
         try:
@@ -22,6 +23,15 @@ class FPM(object):
         try:
             output = check_output("php -v", shell=True).decode()
             return 'v' + output.split("\n")[0][:5][-1]     # '5' / '7'
+        except CalledProcessError as e:
+            return ''
+
+    def get_full_version(self):
+        """return version of php-fpm
+        """
+        try:
+            output = check_output("php -v", shell=True).decode()
+            return output.split("\n")[0][4:10]
         except CalledProcessError as e:
             return ''
 

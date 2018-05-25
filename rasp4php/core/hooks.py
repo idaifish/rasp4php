@@ -5,7 +5,6 @@ CODE_EXECUTION = {
 }
 
 COMMAND_EXECUTION = {
-    # TODO: pcntl_exec
     'exec': {'hook':'php_exec', 'depends': set()},
     'proc_open': {'hook':'zif_proc_open', 'depends': set()},
     'shell_exec': {'hook':'zif_shell_exec', 'depends': set()},
@@ -24,6 +23,7 @@ FILE_UPLOAD = {
 
 SQL_INJECTION = {
     #'depends': set(['PDO', 'pdo-mysql', 'pdo-sqlite', 'mysqli', 'mysqlnd'])
+    'mysqli_query': {'hook':'php_mysqlnd_cmd_write', 'depends': set(['mysqlnd',])}
 }
 
 DESERIALIZATION = {
