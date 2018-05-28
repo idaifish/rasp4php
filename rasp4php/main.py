@@ -7,7 +7,6 @@ from sys import exit
 from time import sleep
 from queue import Queue
 from pathlib import Path
-from ipaddress import ip_address
 from logging.handlers import HTTPHandler
 from urllib.parse import urlparse
 
@@ -16,7 +15,7 @@ import graypy
 
 from __version__ import __VERSION__
 from core.fpm import fpm
-from core.log import logger
+from core.log import logger, RedisHandler
 from core.hooks import *
 from core.thread import HookThread, NotificationThread
 
@@ -84,11 +83,15 @@ def main():
     argparser = argparse.ArgumentParser(prog="rasp4php", description="RASP for PHP")
     argparser.add_argument('-v', '--version', action='version', help="Version number", version='%(prog)s {}'.format(__VERSION__))
     argparser.add_argument('--debug', action='store_true', help="Debug Mode")
-    argparser.add_argument('--graylog', help="Graylog Host")
+    argparser.add_argument('--graylog-host', help="Graylog Host")
     argparser.add_argument('--graylog-port', default=12201, help="Graylog UDP Port(default: 12201)")
     argparser.add_argument('--graylog-loglevel', default='CRITICAL', help="Graylog Log Level(default: CRITICAL)")
     argparser.add_argument('--webhook', help="Webhook URL(eg: http://127.0.0.1:8080/webhooks)")
-
+    argparser.add_argument('--redis-host', help="Redis Host")
+    argparser.add_argument('--redis-port', default=6379, help="Redis Port")
+    argparser.add_argument('--redis-db', default=0, help="Redis Database")
+    argparser.add_argument('--redis-password', help="Redis Password")
+    argparser.add_argument('--redis-channel', help="Redis Publish/Subscribe channel")
 
     args = argparser.parse_args()
 
@@ -99,13 +102,8 @@ def main():
             fmt = '%(asctime)s %(levelname)-8s [%(name)s:%(threadName)s] %(message)s'
         )
 
-    if args.graylog:
-        try:
-            ip_address(args.graylog)
-        except:
-            argparser.error("Invalid IP Address")
-
-        graylog_handler = graypy.GELFHandler(args.graylog, args.graylog_port, debugging_fields=False)
+    if args.graylog_host:
+        graylog_handler = graypy.GELFHandler(args.graylog_host, args.graylog_port, debugging_fields=False)
         graylog_handler.setLevel(args.graylog_loglevel)
         logger.addHandler(graylog_handler)
 
@@ -114,6 +112,11 @@ def main():
         webhook_handler = HTTPHandler(parsed_webhook.netloc, parsed_webhook.path, method='POST', secure=False, credentials=None, context=None)
         webhook_handler.setLevel("CRITICAL")
         logger.addHandler(webhook_handler)
+
+    if args.redis_host:
+        redis_handler = RedisHandler(args.redis_channel, args.redis, args.redis_port, args.redis_db, args.redis_password)
+        redis_handler.setLevel("CRITICAL")
+        logger.addHandler(redis_handler)
 
     bootstrap()
 

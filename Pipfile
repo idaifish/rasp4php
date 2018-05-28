@@ -9,6 +9,7 @@ name = "pypi"
 frida = "*"
 coloredlogs = "*"
 graypy = "*"
+redis = "*"
 
 [scripts]
 rasp4php = 'python rasp4php/main.py'
