@@ -114,7 +114,7 @@ def main():
         logger.addHandler(webhook_handler)
 
     if args.redis_host:
-        redis_handler = RedisHandler(args.redis_channel, args.redis, args.redis_port, args.redis_db, args.redis_password)
+        redis_handler = RedisHandler(args.redis_channel, args.redis_host, args.redis_port, args.redis_db, args.redis_password)
         redis_handler.setLevel("CRITICAL")
         logger.addHandler(redis_handler)
 
