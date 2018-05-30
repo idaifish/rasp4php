@@ -1,3 +1,6 @@
+from pathlib import Path
+
+
 CODE_EXECUTION = {
     'eval': {'hook':'compile_string', 'depends': set()},
     'assert': {'hook':'compile_string', 'depends': set()},
@@ -43,3 +46,28 @@ INFO_LEAKING = {
     'phpinfo': {'hook':'zif_phpinfo', 'depends': set()},
     'getenv': {'hook':'zif_getenv', 'depends': set()}
 }
+
+
+FEATURES = [
+    CODE_EXECUTION,
+    COMMAND_EXECUTION,
+    FILE_UPLOAD,
+    FILE_OPERATION,
+    SSRF,
+    INFO_LEAKING,
+    SQL_INJECTION,
+    DESERIALIZATION,
+]
+
+
+def get_hooks(environment):
+    fpm_modules = environment['fpm_enabled_modules']
+    hook_script_dir = Path(__file__).parent / 'hooks'
+    hook_funcs = []
+    for f in FEATURES:
+        for k,v in f.items():
+            if v['depends'].issubset(set(fpm_modules)):
+                hook_funcs.append(v['hook'])
+    hooks = [str(hook_script_dir / environment['fpm_version'] / (hook + ".js")) for hook in set(hook_funcs)]
+
+    return hooks

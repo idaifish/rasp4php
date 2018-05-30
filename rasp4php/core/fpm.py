@@ -39,9 +39,10 @@ class FPM(object):
         """return php modules
         """
         try:
-            output = check_output("/usr/sbin/php-fpm* -m", shell=True).decode()
+            short_version = self.full_version[:3]
+            output = check_output("/usr/sbin/php-fpm{} -m".format(short_version), shell=True).decode()
             output = output.split('\n\n')[0].split('\n')
-            return filter(lambda x: x!='' and not x.startswith('['), output)
+            return list(filter(lambda x: x!='' and not x.startswith('['), output))
         except CalledProcessError as e:
             return []
 

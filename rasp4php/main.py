@@ -6,7 +6,6 @@ from threading import Event
 from sys import exit
 from time import sleep
 from queue import Queue
-from pathlib import Path
 from logging.handlers import HTTPHandler
 from urllib.parse import urlparse
 
@@ -17,7 +16,7 @@ from __version__ import __VERSION__
 from core.fpm import fpm
 from core.log import logger, RedisHandler
 from core.hooks import *
-from core.thread import HookThread, NotificationThread
+from core.thread import HookMasterThread, HookWorkerThread, NotificationThread
 
 
 # Global MQ
@@ -28,17 +27,8 @@ message_queue = Queue()
 detach_event = Event()
 
 
-# Enabled Features
-FEATURES = (
-    CODE_EXECUTION,
-    COMMAND_EXECUTION,
-    FILE_UPLOAD,
-    FILE_OPERATION,
-    SSRF,
-    INFO_LEAKING,
-    SQL_INJECTION,
-    DESERIALIZATION,
-)
+# Runtime Environment
+environment = {}
 
 
 def exit_callback(signum, frame):
@@ -56,27 +46,12 @@ def bootstrap():
         exit(-1)
     logger.info("OK, PHP-FPM {} is running".format(fpm.full_version))
 
-
-def set_hooks():
-    fpm_workers = fpm.get_current_workers()
-    fpm_version = fpm.version
-    fpm_modules = fpm.get_modules()
-    fpm_modules_set = set(fpm_modules)
-
-    hook_script_dir = Path(__file__).parent / 'core/hooks'
-    hook_funcs = []
-    for f in FEATURES:
-        for k,v in f.items():
-            if v['depends'].issubset(fpm_modules_set):
-                hook_funcs.append(v['hook'])
-    hooks = [str(hook_script_dir / fpm_version / (hook + ".js")) for hook in set(hook_funcs)]
-
-    # Start threads
-    NotificationThread(message_queue).start()
-
-    for worker_pid in fpm_workers:
-        HookThread(worker_pid, hooks, message_queue, detach_event).start()
-        sleep(0.2)
+    # Get phpinfo
+    environment['fpm_master'] = fpm.get_master()
+    environment['fpm_workers'] = fpm.get_current_workers()
+    environment['fpm_version'] = fpm.version
+    environment['fpm_enabled_modules'] = fpm.get_modules()
+    logger.info("PHP-FPM enabled modules: {}".format(set(environment['fpm_enabled_modules'])))
 
 
 def main():
@@ -118,13 +93,24 @@ def main():
         redis_handler.setLevel("CRITICAL")
         logger.addHandler(redis_handler)
 
+    # Start RASP4PHP
     bootstrap()
 
     # Signal
     signal.signal(signal.SIGINT, exit_callback)
     signal.signal(signal.SIGTERM, exit_callback)
 
-    set_hooks()
+    # Start Threads
+    notification_thread = NotificationThread(message_queue)
+    notification_thread.start()
+
+    hooks = get_hooks(environment)
+    HookMasterThread(environment['fpm_master'], hooks, message_queue, detach_event).start()
+
+    for worker_pid in environment['fpm_workers']:
+        HookWorkerThread(worker_pid, hooks, message_queue, detach_event).start()
+
+    notification_thread.join()
 
 
 if __name__ == '__main__':
