@@ -4,10 +4,12 @@
 
     if (args[1].toInt32() === CURLOPT_URL) {
       var message = {
-          function: "curl",
+          function: "curl*",
           args : [],
           filename: "",
-          lineno: -1
+          lineno: -1,
+          context: 'url',
+          type: 'network_access'
       };
 
       var getFilenameAddr = Module.findExportByName(null, 'zend_get_executed_filename');

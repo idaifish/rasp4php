@@ -6,11 +6,13 @@
      */
     onEnter: function (args) {
       var message = {
-            function: "",
-            args : [],
-            filename: "",
-            lineno: -1
-          };
+          function: "",
+          args : [],
+          filename: "",
+          lineno: -1,
+          context: 'command',
+          type: 'command_execution'
+      };
       var getFilenameAddr = Module.findExportByName(null, 'zend_get_executed_filename');
       var getLinenoAddr = Module.findExportByName(null, 'zend_get_executed_lineno');
       var getFilename = new NativeFunction(getFilenameAddr, 'pointer', []);

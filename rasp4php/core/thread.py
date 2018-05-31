@@ -28,6 +28,9 @@ class HookMasterThread(Thread):
             self._device = frida.get_local_device()
             self.session = self._device.attach(self.master_pid)
             attach_lock.release()
+            self.session.on('detached', self.on_detached)
+            self._device.on("child-added", self.on_child_added)
+            self._device.on("child-removed", self.on_child_removed)
 
             if self.session:
                 logger.info("PHP-FPM Master-{} is attached".format(str(self.master_pid)))
@@ -36,19 +39,20 @@ class HookMasterThread(Thread):
 
     def on_child_added(self, child):
         logger.info("PHP-FPM Master spawned a new worker: worker-{}".format(child.pid))
-        HookWorkerThread(child.pid, self.hooks, self.message_queue, self.detach_event, new_child=True).start()
+        new_child = HookWorkerThread(child.pid, self.hooks, self.message_queue, self.detach_event, new_child=True)
+        new_child.start()
 
     def on_child_removed(self, child):
-        logger.info("PHP-FPM Master removed a  worker: worker-{}".format(child.pid))
+        logger.info("PHP-FPM Master removed a worker: worker-{}".format(child.pid))
+
+    def on_detached(self, reason):
+        logger.info("PHP-FPM Master-{} is detached".format(str(self.master_pid)))
 
     def run(self):
-        self._device.on("child-added", lambda child: self.on_child_added(child))
-
         # pm = dynamic
         self.session.enable_child_gating()
 
         self.detach_event.wait()
-        logger.info("PHP-FPM Master-{} is detached".format(str(self.master_pid)))
         self.session.detach()
 
 
@@ -71,6 +75,7 @@ class HookWorkerThread(Thread):
             self._device = frida.get_local_device()
             self.session = self._device.attach(self.worker_pid)
             attach_lock.release()
+            self.session.on('detached', self.on_detached)
 
             if self.session:
                 logger.info("PHP-FPM Worker-{} is attached".format(str(self.worker_pid)))
@@ -80,8 +85,10 @@ class HookWorkerThread(Thread):
     def on_message(self, message, data):
         self.message_queue.put(message)
 
-    def run(self):
-        # Set hooks
+    def on_detached(self, reason):
+        logger.info("PHP-FPM Worker-{} is detached".format(str(self.worker_pid)))
+
+    def instrument(self):
         for hook_name in self.hooks:
             logger.debug("Setting hook '{}' for {}".format(hook_name, self.name))
 
@@ -95,12 +102,14 @@ class HookWorkerThread(Thread):
                 script.on('message', self.on_message)
                 script.load()
 
+    def run(self):
+        self.instrument()
+
         # resume child
         if self.new_child:
             self._device.resume(self.worker_pid)
 
         self.detach_event.wait()
-        logger.info("PHP-FPM Worker-{} is detached".format(str(self.worker_pid)))
         self.session.detach()
 
 

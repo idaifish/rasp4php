@@ -19,12 +19,14 @@
        * args[1]:
        *     char *filename
        */
-       var message = {
-             function: "eval",
-             args : [],
-             filename: '',
-             lineno: -1
-           };
+        var message = {
+            function: "eval",
+            args : [],
+            filename: '',
+            lineno: -1,
+            context: 'code',
+            type: 'code_execution'
+        };
         var evalStringOffset = 24
         var evalString = Memory.readCString(Memory.readPointer(args[0]).add(evalStringOffset));
         var evalFile = Memory.readCString(args[1]);

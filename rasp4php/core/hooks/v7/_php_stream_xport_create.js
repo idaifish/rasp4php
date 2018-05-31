@@ -1,10 +1,12 @@
 {
   onEnter: function (args) {
     var message = {
-        function: "fsockopen",
+        function: "fsockopen*",
         args : [],
         filename: "",
-        lineno: -1
+        lineno: -1,
+        context: 'url',
+        type: 'network_access'
     };
 
     var getFilenameAddr = Module.findExportByName(null, 'zend_get_executed_filename');

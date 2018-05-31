@@ -11,6 +11,7 @@ COMMAND_EXECUTION = {
     'exec': {'hook':'php_exec', 'depends': set()},
     'proc_open': {'hook':'zif_proc_open', 'depends': set()},
     'shell_exec': {'hook':'zif_shell_exec', 'depends': set()},
+    'popen': {'hook':'zif_popen', 'depends': set()},
 }
 
 FILE_OPERATION = {

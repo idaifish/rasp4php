@@ -4,7 +4,9 @@
         function: "",
         args : [],
         filename: "",
-        lineno: -1
+        lineno: -1,
+        context: '',    // code, command, sql, file, url, var . . .
+        type: ''        // file_operation, code_execution, command_execution, network_access, database_query, info_leak, deserialization
     };
 
     var getFilenameAddr = Module.findExportByName(null, 'zend_get_executed_filename');

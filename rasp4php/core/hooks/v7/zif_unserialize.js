@@ -4,7 +4,9 @@
         function: "unserialize",
         args : [''],
         filename: "",
-        lineno: -1
+        lineno: -1,
+        context: 'var',
+        type: 'deserialization'
     };
 
     var getFilenameAddr = Module.findExportByName(null, 'zend_get_executed_filename');

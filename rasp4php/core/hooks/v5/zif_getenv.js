@@ -4,7 +4,9 @@
         function: "getenv",
         args : [],
         filename: "",
-        lineno: -1
+        lineno: -1,
+        context: 'var',
+        type: 'info_leak'
     };
     var getFilenameAddr = Module.findExportByName(null, 'zend_get_executed_filename');
     var getLinenoAddr = Module.findExportByName(null, 'zend_get_executed_lineno');

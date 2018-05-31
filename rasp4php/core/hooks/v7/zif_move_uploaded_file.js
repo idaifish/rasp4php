@@ -4,7 +4,9 @@
         function: "move_uploaded_file",
         args : [],
         filename: "",
-        lineno: -1
+        lineno: -1,
+        context: 'file',
+        type: 'file_operation'
     };
 
     var zendParseParametersAddr = Module.findExportByName(null, 'zend_parse_parameters');

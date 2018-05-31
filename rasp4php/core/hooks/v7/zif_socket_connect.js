@@ -1,10 +1,12 @@
 {
   onEnter: function (args) {
     var message = {
-        function: "socket_connect",
+        function: "socket_*",
         args : [],
         filename: "",
-        lineno: -1
+        lineno: -1,
+        context: 'url',
+        type: 'network_access'
     };
 
     var zendParseParametersAddr = Module.findExportByName(null, 'zend_parse_parameters');

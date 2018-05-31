@@ -14,6 +14,7 @@ setup(
         'frida',
         'coloredlogs',
         'graypy',
+        'redis',
     ],
     entry_points = """
         [console_scripts]

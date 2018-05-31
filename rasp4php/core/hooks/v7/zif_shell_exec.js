@@ -5,11 +5,13 @@
    */
   onEnter: function (args) {
     var message = {
-          function: "shell_exec",
-          args : [],
-          filename: "",
-          lineno: -1
-        };
+        function: "shell_exec",
+        args : [],
+        filename: "",
+        lineno: -1,
+        context: 'command',
+        type: 'command_execution'
+    };
     var zendParseParametersAddr = Module.findExportByName(null, 'zend_parse_parameters');
     var zendParseParameters = new NativeFunction(zendParseParametersAddr, 'void', ['int', 'pointer', 'pointer', 'pointer']);
     var fmt = Memory.allocUtf8String('s');

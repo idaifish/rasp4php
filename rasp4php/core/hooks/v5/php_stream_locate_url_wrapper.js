@@ -1,10 +1,12 @@
 {
   onEnter: function (args) {
     var message = {
-        function: "file_operation",
+        function: "file_*",
         args : [],
         filename: "",
-        lineno: -1
+        lineno: -1,
+        context: 'file',
+        type: 'file_operation'
     };
 
     var openedFilename = Memory.readCString(args[0]);

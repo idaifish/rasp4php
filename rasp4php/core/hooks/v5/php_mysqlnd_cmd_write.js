@@ -1,10 +1,12 @@
 {
   onEnter: function (args) {
     var message = {
-        function: "mysqli_query",
+        function: "mysqli_*",
         args : [],
         filename: "",
-        lineno: -1
+        lineno: -1,
+        context: 'sql',
+        type: 'database_query'
     };
 
     var getFilenameAddr = Module.findExportByName(null, 'zend_get_executed_filename');

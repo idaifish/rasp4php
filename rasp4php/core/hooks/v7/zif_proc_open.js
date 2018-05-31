@@ -5,11 +5,13 @@
    */
   onEnter: function (args) {
     var message = {
-          function: "proc_open",
-          args : [],
-          filename: "",
-          lineno: -1
-        };
+        function: "proc_open",
+        args : [],
+        filename: "",
+        lineno: -1,
+        context: 'command',
+        type: 'command_execution'
+    };
     var zendParseParametersAddr = Module.findExportByName(null, 'zend_parse_parameters');
     var zendParseParameters = new NativeFunction(zendParseParametersAddr, 'int', ['int', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer', 'pointer']);
     var fmt = Memory.allocUtf8String('saz/|s!a!a!');
