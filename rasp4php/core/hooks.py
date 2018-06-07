@@ -48,6 +48,10 @@ INFO_LEAKING = {
     'getenv': {'hook':'zif_getenv', 'depends': set()}
 }
 
+XXE = {
+    'xml_load_external_entity': {'hook': 'xmlLoadExternalEntity', 'depends': set()},
+}
+
 
 FEATURES = [
     CODE_EXECUTION,
@@ -58,6 +62,7 @@ FEATURES = [
     INFO_LEAKING,
     SQL_INJECTION,
     DESERIALIZATION,
+    XXE,
 ]
 
 

@@ -142,7 +142,7 @@ class NotificationThread(Thread):
                 if isinstance(message['payload'], str):
                     logger.debug(message['payload'])
                 else:
-                    if self.filter_manager.filter(message['payload']):
-                        logger.critical(dumps(message['payload']))
+                    #if self.filter_manager.filter(message['payload']):
+                    logger.critical(dumps(message['payload']))
             elif message['type'] == 'error':
                 logger.debug(message['stack'])
