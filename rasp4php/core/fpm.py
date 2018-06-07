@@ -1,5 +1,6 @@
 from subprocess import check_output, CalledProcessError
 from re import findall
+from platform import platform
 
 
 class FPM(object):
@@ -9,6 +10,7 @@ class FPM(object):
         super().__init__()
         self.version = self.get_version()
         self.full_version = self.get_full_version()
+        self.platform = platform()
 
     def is_running(self):
         try:
@@ -43,6 +45,19 @@ class FPM(object):
             output = check_output("/usr/sbin/php-fpm{} -m".format(short_version), shell=True).decode()
             output = output.split('\n\n')[0].split('\n')
             return list(filter(lambda x: x!='' and not x.startswith('['), output))
+        except CalledProcessError as e:
+            return []
+
+    def get_disabled_functions(self):
+        """return disabled functions.
+        """
+        try:
+            short_version = self.full_version[:3]
+            output = check_output("/usr/sbin/php-fpm{} -i | grep disable_function".format(short_version), shell=True).decode()
+            output = output.split('=>')[1].strip().split(',')
+            if 'no value' in output:
+                return []
+            return list([i for i in output if i != ''])
         except CalledProcessError as e:
             return []
 

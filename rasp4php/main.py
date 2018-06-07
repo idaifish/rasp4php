@@ -2,10 +2,8 @@
 
 import signal
 import argparse
-from threading import Event
 from sys import exit
 from time import sleep
-from queue import Queue
 from logging.handlers import HTTPHandler
 from urllib.parse import urlparse
 
@@ -13,22 +11,11 @@ import coloredlogs
 import graypy
 
 from __version__ import __VERSION__
+from core._globals import detach_event, environment
 from core.fpm import fpm
 from core.log import logger, RedisHandler
 from core.hooks import *
 from core.thread import HookMasterThread, HookWorkerThread, NotificationThread
-
-
-# Global MQ
-message_queue = Queue()
-
-
-# Detach Event
-detach_event = Event()
-
-
-# Runtime Environment
-environment = {}
 
 
 def exit_callback(signum, frame):
@@ -44,14 +31,16 @@ def bootstrap():
     if not fpm.is_running():
         logger.error("PHP-FPM is not running")
         exit(-1)
-    logger.info("OK, PHP-FPM {} is running".format(fpm.full_version))
+    logger.info("OK, PHP-FPM {} is running on {}".format(fpm.full_version, fpm.platform))
 
     # Get phpinfo
     environment['fpm_master'] = fpm.get_master()
     environment['fpm_workers'] = fpm.get_current_workers()
     environment['fpm_version'] = fpm.version
     environment['fpm_enabled_modules'] = fpm.get_modules()
+    environment['fpm_disabled_functions'] = fpm.get_disabled_functions()
     logger.info("PHP-FPM enabled modules: {}".format(set(environment['fpm_enabled_modules'])))
+    logger.info("PHP-FPM disabled functions: {}".format(environment['fpm_disabled_functions']))
 
 
 def main():
@@ -101,14 +90,14 @@ def main():
     signal.signal(signal.SIGTERM, exit_callback)
 
     # Start Threads
-    notification_thread = NotificationThread(message_queue)
+    notification_thread = NotificationThread()
     notification_thread.start()
 
     hooks = get_hooks(environment)
-    HookMasterThread(environment['fpm_master'], hooks, message_queue, detach_event).start()
+    HookMasterThread(environment['fpm_master'], hooks, detach_event).start()
 
     for worker_pid in environment['fpm_workers']:
-        HookWorkerThread(worker_pid, hooks, message_queue, detach_event).start()
+        HookWorkerThread(worker_pid, hooks, detach_event).start()
 
     notification_thread.join()
 

@@ -31,23 +31,23 @@
         },
         "frida": {
             "hashes": [
-                "sha256:1a4f6c21a48c7763e273ec8c1817de9cd8f342fb1213ea6250b6d73cdb84e746",
-                "sha256:26bf84fcb74eb6a1a07c4d712f69f6fa8e49ca6aa94c21f9fa19aee565ef590c",
-                "sha256:4075b1f8554966d838fa3e86fa99923d6022d5f306057f27e412d4fcf3a80314",
-                "sha256:4e73c72a5163c67e4f65ae4854785a76d0b13f9f06cd95ce0320979d09397ecd",
-                "sha256:514eb6d937b2f961b1ab5b42a335ae9c6be4e01284bd71b8f601c343899dcae2",
-                "sha256:5212520e6f3c0406a089c975dfb2d2bf39a1a36a00a41ea0c69dbd0b2beda869",
-                "sha256:6508db68eb916e2a9b417b1cee8995185b1e63780e3077757fab92411e105018",
-                "sha256:82a40d6373f6a2a666368398d2fe99e576147c9805c1a65aed6cafa88b35af00",
-                "sha256:88564e7459e99062432253c79438562099b88b541c051b96364e7fcd74baede1",
-                "sha256:88c5fce52e70160c81f6f8ee1fa83e222fa21b537d29e661deb51cb59bad4721",
-                "sha256:a43dca6b9341e736a91661fa10efdc851cca8258a9b60302412223e249bf949e",
-                "sha256:ae6cb77c560cead0fe0c9ed6fc15a621815cf6d0d1ab546242d06f41adcff975",
-                "sha256:dcd2dde8dd0976c6f937a62098cb845edca1c0d28a4ce4b0767e768f3ae9d5b7",
-                "sha256:e408abbd9f1625951a65212847d789a51927aaa0fb5ba95718f3b283b1156a6e"
+                "sha256:0295e2085c1af13fab4e12543ab49d9b6601ff71e33aad0ad01302fe9d975387",
+                "sha256:11f10201046161afda66f86942bc45bdc8d2224ce36d6573d7723a9cf89779fe",
+                "sha256:208d72a4f2d5630de93a6c175f2307caf8de0f4ea3d849de6fe0a3fbf21c45b7",
+                "sha256:2bbbde47c66c61c5ab0dc91db62fc31870dcada415e1ee972a3ccd1768231958",
+                "sha256:338997a70f01644040f7241dc0ab0bfe07267c24f83d0cfc26d5263da5341daa",
+                "sha256:4cc99675f396dd53330a9436d9bceb7bedead7525cca0615c1e307b124114ea4",
+                "sha256:576ab0b624b648cfe6580de7ef696badedd4b5bab121d66c38e817f594671bfe",
+                "sha256:824ce9f29efbe932229292fdcf585a7e410f15fa8f5442666ec169e7e25e915b",
+                "sha256:844ec198b88bcf900bfbec8b565f0844dbe68bd89cd103b4ec111c8677fdbbfc",
+                "sha256:9cf6308dec77fa566ef3602b030b9b4d3d4fccdcc2f9eccdf5887797a62f86d3",
+                "sha256:bfdce9291ccc70a8f61ba35d1bdbb3858cb8bdda4d0a7efda10f03bba5b79212",
+                "sha256:d08ffee11fb9265238c9984cd804cccab91a938d1f76ff8ea994df3fbd6c2a06",
+                "sha256:d866cf2733c7063bb669aaeadf0b536964d9151d076e52cc4951c5ebde2adfd3",
+                "sha256:dcb5ec65d673e2119b2b687e50f8e2755eb85fb4ab96345dcda9cafef8b25d2e"
             ],
             "index": "pypi",
-            "version": "==11.0.3"
+            "version": "==11.0.8"
         },
         "graypy": {
             "hashes": [

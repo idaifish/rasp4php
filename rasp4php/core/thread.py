@@ -3,7 +3,9 @@ from json import dumps
 
 import frida
 
+from ._globals import message_queue, environment
 from .log import logger
+from .filter import FilterManager
 
 
 # Local device lock
@@ -14,7 +16,7 @@ class HookMasterThread(Thread):
     """Hook PHP-FPM master.
     """
 
-    def __init__(self, master_pid, hooks, message_queue, detach_event):
+    def __init__(self, master_pid, hooks, detach_event):
         super().__init__()
         self.master_pid = master_pid
         self.name = "HookMasterThread-{}".format(str(self.master_pid))
@@ -39,7 +41,7 @@ class HookMasterThread(Thread):
 
     def on_child_added(self, child):
         logger.info("PHP-FPM Master spawned a new worker: worker-{}".format(child.pid))
-        new_child = HookWorkerThread(child.pid, self.hooks, self.message_queue, self.detach_event, new_child=True)
+        new_child = HookWorkerThread(child.pid, self.hooks, self.detach_event, new_child=True)
         new_child.start()
 
     def on_child_removed(self, child):
@@ -47,6 +49,9 @@ class HookMasterThread(Thread):
 
     def on_detached(self, reason):
         logger.info("PHP-FPM Master-{} is detached".format(str(self.master_pid)))
+
+    def on_message(self, message, data):
+        self.message_queue.put(message)
 
     def run(self):
         # pm = dynamic
@@ -60,7 +65,7 @@ class HookWorkerThread(Thread):
     """Hook PHP-FPM workers.
     """
 
-    def __init__(self, worker_pid, hooks, message_queue, detach_event, new_child=False):
+    def __init__(self, worker_pid, hooks, detach_event, new_child=False):
         super().__init__()
         self.worker_pid = worker_pid
         self.name = "HookWorkerThread-{}".format(str(worker_pid))
@@ -117,10 +122,15 @@ class NotificationThread(Thread):
     """Read Message Queue
     """
 
-    def __init__(self, message_queue):
+    def __init__(self):
         super().__init__()
         self.message_queue = message_queue
         self.name = "NotificationThread"
+
+        filter_manager = FilterManager()
+        filter_manager.load_rule()
+        filter_manager.load_filters()
+        self.filter_manager = filter_manager
 
     def run(self):
         logger.info("Notification Thread is starting.")
@@ -132,6 +142,7 @@ class NotificationThread(Thread):
                 if isinstance(message['payload'], str):
                     logger.debug(message['payload'])
                 else:
-                    logger.critical(dumps(message['payload']))
+                    if self.filter_manager.filter(message['payload']):
+                        logger.critical(dumps(message['payload']))
             elif message['type'] == 'error':
                 logger.debug(message['stack'])
