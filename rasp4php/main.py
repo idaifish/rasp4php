@@ -14,7 +14,7 @@ from __version__ import __VERSION__
 from core._globals import detach_event, environment
 from core.fpm import fpm
 from core.log import logger, RedisHandler
-from core.hooks import *
+from core.hooks import HooksManager
 from core.thread import HookMasterThread, HookWorkerThread, NotificationThread
 
 
@@ -93,7 +93,7 @@ def main():
     notification_thread = NotificationThread()
     notification_thread.start()
 
-    hooks = get_hooks(environment)
+    hooks = HooksManager().get_hook_scripts(environment)
     HookMasterThread(environment['fpm_master'], hooks, detach_event).start()
 
     for worker_pid in environment['fpm_workers']:

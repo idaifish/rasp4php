@@ -6,7 +6,7 @@
         filename: "",
         lineno: -1,
         context: 'sql',
-        type: 'database_query'
+        type: 'database_operation'
     };
 
     var getFilenameAddr = Module.findExportByName(null, 'zend_get_executed_filename');

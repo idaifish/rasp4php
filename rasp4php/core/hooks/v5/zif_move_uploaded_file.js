@@ -6,7 +6,7 @@
         filename: "",
         lineno: -1,
         context: 'file',
-        type: 'file_operation'
+        type: 'file_upload'
     };
 
     var zendParseParametersAddr = Module.findExportByName(null, 'zend_parse_parameters');
