@@ -139,10 +139,13 @@ class NotificationThread(Thread):
             message = self.message_queue.get()
 
             if message['type'] == 'send':
-                if isinstance(message['payload'], str):
+                if not isinstance(message['payload'], dict):
                     logger.debug(message['payload'])
                 else:
                     #if self.filter_manager.filter(message['payload']):
                     logger.critical(dumps(message['payload']))
             elif message['type'] == 'error':
                 logger.debug(message['stack'])
+            elif message['type'] == 'exit':
+                logger.info("Byebye~")
+                break

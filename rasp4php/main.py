@@ -11,7 +11,7 @@ import coloredlogs
 import graypy
 
 from __version__ import __VERSION__
-from core._globals import detach_event, environment
+from core._globals import detach_event, environment, message_queue
 from core.fpm import fpm
 from core.log import logger, RedisHandler
 from core.hooks import HooksManager
@@ -20,6 +20,7 @@ from core.thread import HookMasterThread, HookWorkerThread, NotificationThread
 
 def exit_callback(signum, frame):
     detach_event.set()
+    message_queue.put({'type': 'exit'})
     logger.info("RASP4PHP is exiting")
     exit(0)
 
