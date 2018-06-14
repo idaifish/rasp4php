@@ -1,12 +1,11 @@
 from threading import Thread, Lock
 from json import dumps
+from pathlib import Path
 
 import frida
 
 from ._globals import message_queue, environment
 from .log import logger
-from .filter import FilterManager
-
 
 # Local device lock
 attach_lock = Lock()
@@ -94,18 +93,15 @@ class HookWorkerThread(Thread):
         logger.info("PHP-FPM Worker-{} is detached".format(str(self.worker_pid)))
 
     def instrument(self):
-        for hook_name in self.hooks:
-            logger.debug("Setting hook '{}' for {}".format(hook_name, self.name))
+        for hook in self.hooks:
+            logger.debug("Setting up hook '{}' for Worker-{}".format(hook.name, self.worker_pid))
 
-            with open(hook_name) as hook_script:
-                func_name = hook_name.split('/')[-1].strip('.js')
-                hook = """
-                Interceptor.attach(Module.findExportByName(null, '{func_name}'), {hook_script});
-                send("HookWorkerThread-{worker_pid}: Function {func_name} is hooked successfully");
-                """.format(func_name=func_name, hook_script=hook_script.read(), worker_pid=self.worker_pid)
-                script = self.session.create_script(hook)
-                script.on('message', self.on_message)
-                script.load()
+            feedback = """
+            send("HookWorkerThread-{worker_pid}: Function {func_name} is hooked successfully");
+            """.format(worker_pid=self.worker_pid, func_name=hook.name)
+            script = self.session.create_script(hook.script + feedback)
+            script.on('message', self.on_message)
+            script.load()
 
     def run(self):
         self.instrument()
@@ -127,11 +123,6 @@ class NotificationThread(Thread):
         self.message_queue = message_queue
         self.name = "NotificationThread"
 
-        filter_manager = FilterManager()
-        filter_manager.load_rule()
-        filter_manager.load_filters()
-        self.filter_manager = filter_manager
-
     def run(self):
         logger.info("Notification Thread is starting.")
 
@@ -142,7 +133,6 @@ class NotificationThread(Thread):
                 if not isinstance(message['payload'], dict):
                     logger.debug(message['payload'])
                 else:
-                    #if self.filter_manager.filter(message['payload']):
                     logger.critical(dumps(message['payload']))
             elif message['type'] == 'error':
                 logger.debug(message['stack'])

@@ -1,4 +1,8 @@
 from pathlib import Path
+from collections import namedtuple
+
+
+Hook = namedtuple('Hook', ('name', 'script'))
 
 
 class HooksManager(object):
@@ -65,6 +69,11 @@ class HooksManager(object):
 
     hook_script_base = Path(__file__).parent / 'hooks'
 
+    hook_script_template = """
+    {php_api}
+    Interceptor.attach(Module.findExportByName(null, '{func_name}'), {callback});
+    """
+
     def get_hooks(self):
         return self.hooks.values()
 
@@ -72,13 +81,21 @@ class HooksManager(object):
         self.hooks.pop(name)
         return self.hooks.values()
 
-    def get_hook_scripts(self, environment):
-            fpm_modules = environment['fpm_enabled_modules']
-            hook_funcs = []
-            for f in self.get_hooks():
-                for k,v in f.items():
-                    if v['depends'].issubset(set(fpm_modules)):
-                        hook_funcs.append(v['hook'])
-            hook_scripts = [str(self.hook_script_base / environment['fpm_version'] / (hook_func + ".js")) for hook_func in set(hook_funcs)]
+    def get_php_api(self):
+        return (self.hook_script_base / 'php.js').read_text()
 
-            return hook_scripts
+    def get_hook_scripts(self, environment):
+        fpm_modules = environment['fpm_enabled_modules']
+        hook_funcs = []
+        hook_scripts = []
+        for f in self.get_hooks():
+            for k,v in f.items():
+                if v['depends'].issubset(set(fpm_modules)):
+                    hook_funcs.append(v['hook'])
+
+        for hook_func in set(hook_funcs):
+            callback_path = self.hook_script_base / environment['fpm_version'] / (hook_func + ".js")
+            script = self.hook_script_template.format(php_api=self.get_php_api(), func_name=hook_func, callback=callback_path.read_text())
+            hook_scripts.append(Hook(hook_func, script))
+
+        return hook_scripts
