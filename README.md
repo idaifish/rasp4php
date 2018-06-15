@@ -1,6 +1,11 @@
-# RASP4PHP
+# RASP4PHP   ![license](https://img.shields.io/github/license/idaifish/rasp4php.svg)
 
 Runtime Application Self-Protection for PHP, based on [Frida](https://www.frida.re), mostly used as a sensor for SIEM.
+
+
+## Compatibility
+
+Tested on Ubuntu 1604, PHP 5.x and 7.x are officially supported.
 
 
 ## Usage
