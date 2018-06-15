@@ -1,11 +1,10 @@
 from subprocess import check_output, CalledProcessError
-from re import findall
 from platform import platform
 
 
 class FPM(object):
-    """Wrapper for FPM
-    """
+    """A wrapper for PHP-FPM process."""
+
     def __init__(self):
         super().__init__()
         self.version = self.get_version()
@@ -20,8 +19,8 @@ class FPM(object):
             return False
 
     def get_version(self):
-        """return version of php-fpm
-        """
+        """return version of php-fpm."""
+
         try:
             output = check_output("php -v", shell=True).decode()
             return 'v' + output.split("\n")[0][:5][-1]     # '5' / '7'
@@ -29,8 +28,8 @@ class FPM(object):
             return ''
 
     def get_full_version(self):
-        """return version of php-fpm
-        """
+        """return version of php-fpm."""
+
         try:
             output = check_output("php -v", shell=True).decode()
             return output.split("\n")[0][4:10]
@@ -38,22 +37,24 @@ class FPM(object):
             return ''
 
     def get_modules(self):
-        """return php modules
-        """
+        """return php modules."""
+
         try:
             short_version = self.full_version[:3]
-            output = check_output("/usr/sbin/php-fpm{} -m".format(short_version), shell=True).decode()
+            cmd = "/usr/sbin/php-fpm{} -m".format(short_version)
+            output = check_output(cmd, shell=True).decode()
             output = output.split('\n\n')[0].split('\n')
-            return list(filter(lambda x: x!='' and not x.startswith('['), output))
+            return list(filter(lambda x: x != '' and not x.startswith('['), output))
         except CalledProcessError as e:
             return []
 
     def get_disabled_functions(self):
-        """return disabled functions.
-        """
+        """return disabled functions."""
+
         try:
             short_version = self.full_version[:3]
-            output = check_output("/usr/sbin/php-fpm{} -i | grep disable_function".format(short_version), shell=True).decode()
+            cmd = "/usr/sbin/php-fpm{} -i | grep disable_function".format(short_version)
+            output = check_output(cmd, shell=True).decode()
             output = output.split('=>')[1].strip().split(',')
             if 'no value' in output:
                 return []
@@ -78,4 +79,5 @@ class FPM(object):
             return None
 
 
+# Singleton
 fpm = FPM()

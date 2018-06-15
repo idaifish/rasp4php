@@ -10,7 +10,7 @@ LOGGING = {
     "formatters": {
         "default": {
             "format": '%(asctime)s %(levelname)-8s [%(name)s:%(threadName)s] %(message)s',
-            "datefmt" : '%Y-%m-%d %H:%M:%S'
+            "datefmt": '%Y-%m-%d %H:%M:%S'
         }
     },
     "filters": {},
@@ -46,8 +46,8 @@ logger = logging.getLogger('rasp4php')
 
 # Redis Handler
 class RedisFormatter(logging.Formatter):
-    """Redis Message JSON Formatter
-    """
+    """Redis Message JSON Formatter."""
+
     def __init__(self):
         super().__init__(self)
 
@@ -61,8 +61,8 @@ class RedisFormatter(logging.Formatter):
 
 
 class RedisHandler(logging.Handler):
-    """Publish message to redis channel.
-    """
+    """Publish message to redis channel."""
+
     def __init__(self, channel, host='localhost', port=6379, db=0, password=None, level=logging.NOTSET, formatter=RedisFormatter):
         self.channel = channel
         self.level = level

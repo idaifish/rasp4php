@@ -1,19 +1,17 @@
 from threading import Thread, Lock
 from json import dumps
-from pathlib import Path
 
 import frida
 
-from ._globals import message_queue, environment
-from .log import logger
+from rasp.core._globals import message_queue
+from rasp.core.log import logger
 
 # Local device lock
 attach_lock = Lock()
 
 
 class HookMasterThread(Thread):
-    """Hook PHP-FPM master.
-    """
+    """Hook PHP-FPM master."""
 
     def __init__(self, master_pid, hooks, detach_event):
         super().__init__()
@@ -61,8 +59,7 @@ class HookMasterThread(Thread):
 
 
 class HookWorkerThread(Thread):
-    """Hook PHP-FPM workers.
-    """
+    """Hook PHP-FPM workers."""
 
     def __init__(self, worker_pid, hooks, detach_event, new_child=False):
         super().__init__()
@@ -115,8 +112,7 @@ class HookWorkerThread(Thread):
 
 
 class NotificationThread(Thread):
-    """Read Message Queue
-    """
+    """Messages handler."""
 
     def __init__(self):
         super().__init__()

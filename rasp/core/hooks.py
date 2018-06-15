@@ -31,7 +31,7 @@ class HooksManager(object):
 
     DB_OPERATION = {
         # TODO: mongodb, sqlite
-        'mysqli_query': {'hook': 'php_mysqlnd_cmd_write', 'depends': set(['mysqlnd',])}
+        'mysqli_query': {'hook': 'php_mysqlnd_cmd_write', 'depends': set(['mysqlnd', ])}
     }
 
     DESERIALIZATION = {
@@ -39,9 +39,9 @@ class HooksManager(object):
     }
 
     NETWORK_ACCESS = {
-        'curl_setopt': {'hook': 'curl_easy_setopt', 'depends': set(['curl',])},
-        'curl_multi_setopt': {'hook': 'curl_multi_setopt', 'depends': set(['curl',])},
-        'curl_share_setopt': {'hook': 'curl_share_setopt', 'depends': set(['curl',])},
+        'curl_setopt': {'hook': 'curl_easy_setopt', 'depends': set(['curl', ])},
+        'curl_multi_setopt': {'hook': 'curl_multi_setopt', 'depends': set(['curl', ])},
+        'curl_share_setopt': {'hook': 'curl_share_setopt', 'depends': set(['curl', ])},
         'fsockopen': {'hook': '_php_stream_xport_create', 'depends': set()},
         'socket_connect': {'hook': 'zif_socket_connect', 'depends': set()},
     }
@@ -52,7 +52,7 @@ class HooksManager(object):
     }
 
     XXE = {
-        'xml_load_external_entity': {'hook': 'xmlLoadExternalEntity', 'depends': set(['libxml',])},
+        'xml_load_external_entity': {'hook': 'xmlLoadExternalEntity', 'depends': set(['libxml', ])},
     }
 
     hooks = {
@@ -67,7 +67,7 @@ class HooksManager(object):
         'xml_external_entity': XXE,
     }
 
-    hook_script_base = Path(__file__).parent / 'hooks'
+    hook_script_base = Path(__file__).parents[1] / 'hooks'
 
     hook_script_template = """
     {php_api}
@@ -89,13 +89,18 @@ class HooksManager(object):
         hook_funcs = []
         hook_scripts = []
         for f in self.get_hooks():
-            for k,v in f.items():
+            for k, v in f.items():
                 if v['depends'].issubset(set(fpm_modules)):
                     hook_funcs.append(v['hook'])
 
         for hook_func in set(hook_funcs):
-            callback_path = self.hook_script_base / environment['fpm_version'] / (hook_func + ".js")
-            script = self.hook_script_template.format(php_api=self.get_php_api(), func_name=hook_func, callback=callback_path.read_text())
+            callback_path = self.hook_script_base / \
+                environment['fpm_version'] / (hook_func + ".js")
+            script = self.hook_script_template.format(
+                php_api=self.get_php_api(),
+                func_name=hook_func,
+                callback=callback_path.read_text()
+            )
             hook_scripts.append(Hook(hook_func, script))
 
         return hook_scripts
