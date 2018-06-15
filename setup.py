@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from rasp4php.__version__ import __VERSION__
+from rasp.common.version import __VERSION__
 
 
 setup(
@@ -14,6 +14,7 @@ setup(
         'frida',
         'coloredlogs',
         'graypy',
+        'redis',
     ],
     entry_points = """
         [console_scripts]
