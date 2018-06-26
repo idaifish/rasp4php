@@ -62,7 +62,7 @@ class FilterManager(object):
             filter_paths.append(path)
 
         for filter_path in filter_paths:
-            for filter_file in filter_path.resolve().iterdir():
+            for filter_file in filter_path.resolve().rglob('*.py'):
                 spec = importlib.util.spec_from_file_location(filter_file.stem, filter_file.as_posix())
                 module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(module)

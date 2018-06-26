@@ -1,0 +1,7 @@
+include LICENSE
+include README.md
+recursive-include rasp/hooks/ *.*
+recursive-include rasp/rules/ *.*
+recursive-include rasp/filters/ *.*
+global-exclude __pycache__
+global-exclude *.py[co]
