@@ -1,5 +1,6 @@
-from pathlib import Path
 from collections import namedtuple
+
+from rasp.common.constants import PROJECT_ROOT
 
 
 Hook = namedtuple('Hook', ('name', 'script'))
@@ -67,7 +68,7 @@ class HooksManager(object):
         'xml_external_entity': XXE,
     }
 
-    hook_script_base = Path(__file__).parents[1] / 'hooks'
+    hook_script_base = PROJECT_ROOT / 'rasp/hooks'
 
     hook_script_template = """
     {php_api}

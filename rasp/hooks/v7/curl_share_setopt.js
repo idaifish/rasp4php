@@ -17,7 +17,11 @@
         document_root: PHP.getServerEnv('DOCUMENT_ROOT')
       };
 
-      message.args.push(Memory.readCString(args[2]));
+      var url = Memory.readCString(args[2]);
+      message.args.push(url);
+      if (url.indexOf("://") === -1) {
+        message.normalized_args.push("//" + url);
+      }
 
       send(message);
     }

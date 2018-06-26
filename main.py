@@ -14,7 +14,7 @@ from rasp.core.app import Application
 
 def main():
     argparser = argparse.ArgumentParser(prog=Application.name, description="RASP for PHP")
-    argparser.add_argument('-v', '--version', action='version', help="Version number", version='%(prog)s {}'.format(__VERSION__))
+    argparser.add_argument('-v', '--version', action='version', version='%(prog)s {}'.format(__VERSION__))
     argparser.add_argument('--debug', action='store_true', help="Debug Mode")
     argparser.add_argument('--graylog-host', help="Graylog Host")
     argparser.add_argument('--graylog-port', default=12201, help="Graylog UDP Port(default: 12201)")

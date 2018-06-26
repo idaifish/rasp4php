@@ -3,8 +3,9 @@ from json import dumps
 
 import frida
 
-from rasp.core._globals import message_queue
+from rasp.core.message import message_queue
 from rasp.core.log import logger
+from rasp.core.filter import FilterManager
 
 # Local device lock
 attach_lock = Lock()
@@ -118,6 +119,7 @@ class NotificationThread(Thread):
         super().__init__()
         self.message_queue = message_queue
         self.name = "NotificationThread"
+        self.filter_manager = FilterManager()
 
     def run(self):
         logger.info("Notification Thread is starting.")
@@ -129,7 +131,8 @@ class NotificationThread(Thread):
                 if not isinstance(message['payload'], dict):
                     logger.debug(message['payload'])
                 else:
-                    logger.critical(dumps(message['payload']))
+                    if self.filter_manager.filter(message['payload']):
+                        logger.critical(dumps(message['payload']))
             elif message['type'] == 'error':
                 logger.debug(message['stack'])
             elif message['type'] == 'exit':

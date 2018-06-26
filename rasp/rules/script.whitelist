@@ -1,0 +1,2 @@
+[default.script.whitelist]
+;/path/to/ignore_eval.php:233
