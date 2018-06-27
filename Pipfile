@@ -12,5 +12,5 @@ graypy = "*"
 redis = "*"
 
 [scripts]
-rasp4php = 'python main.py'
-debug-rasp4php = 'python main.py --debug'
+rasp = 'python rasp-cli'
+rasp-debug = 'python rasp-cli --debug'
