@@ -6,6 +6,8 @@ import frida
 from rasp.core.message import message_queue
 from rasp.core.log import logger
 from rasp.core.filter import FilterManager
+from rasp.core.hooks import HooksManager
+
 
 # Local device lock
 attach_lock = Lock()
@@ -48,12 +50,32 @@ class HookMasterThread(Thread):
     def on_detached(self, reason):
         logger.info("PHP-FPM Master-{} is detached".format(str(self.master_pid)))
 
-    def on_message(self, message, data):
-        self.message_queue.put(message)
+    def baseline_check(self, message, data):
+        result = message['payload']
+        baseline = {
+            'allow_url_include': '',
+            'allow_url_fopen': '1',
+            'auto_prepend_file': '',
+            'auto_append_file': '',
+            'expose_php': '',
+            'display_errors': '',
+            'open_basedir': '',
+            'short_open_tag': '',
+            'yaml.decode_php': None,
+        }
+
+        for ini_key, ini_value in baseline.items():
+            if result[ini_key] != ini_value:
+                logger.info("[Sensitive INI] {} => {}".format(ini_key, bool(result[ini_key])))
 
     def run(self):
         # pm = dynamic
         self.session.enable_child_gating()
+
+        # Baseline check.
+        baseline_script = self.session.create_script(HooksManager().get_baseline_script())
+        baseline_script.on('message', self.baseline_check)
+        baseline_script.load()
 
         self.detach_event.wait()
         self.session.detach()

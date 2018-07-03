@@ -62,9 +62,9 @@ class HooksManager(object):
         'file_upload': FILE_UPLOAD,
         'file_operation': FILE_OPERATION,
         'network_access': NETWORK_ACCESS,
-        'info_leak': INFO_LEAKING,
+        #'info_leak': INFO_LEAKING,
         'database_operation': DB_OPERATION,
-        'deserialization': DESERIALIZATION,
+        #'deserialization': DESERIALIZATION,
         'xml_external_entity': XXE,
     }
 
@@ -84,6 +84,9 @@ class HooksManager(object):
 
     def get_php_api(self):
         return (self.hook_script_base / 'php.js').read_text()
+
+    def get_baseline_script(self):
+        return (self.hook_script_base / 'baseline.js').read_text()
 
     def get_hook_scripts(self, environment):
         fpm_modules = environment['fpm_enabled_modules']

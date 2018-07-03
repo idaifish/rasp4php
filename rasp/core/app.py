@@ -4,7 +4,7 @@ from threading import Event
 
 from rasp.core.log import logger
 from rasp.core.fpm import fpm
-from rasp.core.runtime import runtime
+from rasp.core.runtime import Runtime
 from rasp.core.hooks import HooksManager
 from rasp.core.message import message_queue
 from rasp.core.thread import HookMasterThread, HookWorkerThread, NotificationThread
@@ -16,7 +16,7 @@ class Application(object):
 
     def __init__(self, mode="monitoring"):
         self.mode = mode
-        self.environment = runtime.environment
+        self.environment = Runtime().environment
         self.detach_event = Event()
 
     def bootstrap(self):

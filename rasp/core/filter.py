@@ -1,4 +1,4 @@
-import importlib
+import importlib.util
 import inspect
 from enum import Enum
 from collections import defaultdict
