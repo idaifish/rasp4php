@@ -1,5 +1,7 @@
+from __future__ import unicode_literals
 from subprocess import check_output, CalledProcessError
-from platform import platform
+
+from builtins import super, object
 
 
 class FPM(object):
@@ -9,7 +11,6 @@ class FPM(object):
         super().__init__()
         self.version = self.get_version()
         self.full_version = self.get_full_version()
-        self.platform = platform()
 
     def is_running(self):
         try:

@@ -1,4 +1,4 @@
-# RASP4PHP   ![license](https://img.shields.io/github/license/idaifish/rasp4php.svg)
+# RASP4PHP   ![license](https://img.shields.io/github/license/idaifish/rasp4php.svg) [![Build Status](https://travis-ci.com/idaifish/rasp4php.svg?branch=master)](https://travis-ci.com/idaifish/rasp4php)
 
 Runtime Application Self-Protection for PHP, based on [Frida](https://www.frida.re), mostly used as a sensor for SIEM.
 
@@ -18,13 +18,13 @@ $ pipenv install
 $ pipenv shell
 
 # Console
-$ sudo pipenv run debug-rasp4php
+$ sudo pipenv run rasp-debug
 
 # GELF UDP Output
-$ sudo pipenv run rasp4php --graylog 127.0.0.1 --graylog-port 27017
+$ sudo pipenv run rasp --graylog 127.0.0.1 --graylog-port 27017
 
 # Webhook
-$ sudo pipenv run rasp4php --webhook http://127.0.0.1:8080/webhooks
+$ sudo pipenv run rasp --webhook http://127.0.0.1:8080/webhooks
 ```
 
 **Docker**

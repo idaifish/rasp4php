@@ -1,5 +1,9 @@
-from pathlib import Path
+from __future__ import unicode_literals
 from collections import namedtuple
+
+from builtins import object
+
+from rasp.common.constants import PROJECT_ROOT
 
 
 Hook = namedtuple('Hook', ('name', 'script'))
@@ -61,13 +65,13 @@ class HooksManager(object):
         'file_upload': FILE_UPLOAD,
         'file_operation': FILE_OPERATION,
         'network_access': NETWORK_ACCESS,
-        'info_leak': INFO_LEAKING,
+        #'info_leak': INFO_LEAKING,
         'database_operation': DB_OPERATION,
-        'deserialization': DESERIALIZATION,
+        #'deserialization': DESERIALIZATION,
         'xml_external_entity': XXE,
     }
 
-    hook_script_base = Path(__file__).parents[1] / 'hooks'
+    hook_script_base = PROJECT_ROOT / 'rasp/hooks'
 
     hook_script_template = """
     {php_api}
@@ -83,6 +87,9 @@ class HooksManager(object):
 
     def get_php_api(self):
         return (self.hook_script_base / 'php.js').read_text()
+
+    def get_baseline_script(self):
+        return (self.hook_script_base / 'baseline.js').read_text()
 
     def get_hook_scripts(self, environment):
         fpm_modules = environment['fpm_enabled_modules']

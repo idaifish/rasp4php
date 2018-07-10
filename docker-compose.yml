@@ -27,7 +27,7 @@ services:
             - 9000
         cap_add:
             - SYS_PTRACE
-        command: ["sh", "-c", "php-fpm7.0 -D ; python rasp4php/main.py ${RASP4PHP7_OPTION---debug}"]
+        command: ["sh", "-c", "php-fpm7.0 -D ; python rasp-cli ${RASP4PHP7_OPTION---debug}"]
 
     rasp4php5:
         build:
@@ -40,7 +40,7 @@ services:
             - 9001
         cap_add:
             - SYS_PTRACE
-        command: ["sh", "-c", "php-fpm5.6 -D ; python rasp4php/main.py ${RASP4PHP5_OPTION---debug}"]
+        command: ["sh", "-c", "php-fpm5.6 -D ; python rasp-cli ${RASP4PHP5_OPTION---debug}"]
 
 volumes:
     webroot:

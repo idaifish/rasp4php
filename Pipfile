@@ -10,7 +10,12 @@ frida = "*"
 coloredlogs = "*"
 graypy = "*"
 redis = "*"
+future = "*"
+"enum34" = "*"
+configparser = "*"
+ipaddress = "*"
+"pathlib2" = "*"
 
 [scripts]
-rasp4php = 'python main.py'
-debug-rasp4php = 'python main.py --debug'
+rasp = 'python rasp-cli'
+rasp-debug = 'python rasp-cli --debug'

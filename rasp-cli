@@ -1,5 +1,8 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
+from __future__ import unicode_literals
+from future.standard_library import install_aliases
+install_aliases()
 import argparse
 from logging.handlers import HTTPHandler
 from urllib.parse import urlparse
@@ -14,7 +17,7 @@ from rasp.core.app import Application
 
 def main():
     argparser = argparse.ArgumentParser(prog=Application.name, description="RASP for PHP")
-    argparser.add_argument('-v', '--version', action='version', help="Version number", version='%(prog)s {}'.format(__VERSION__))
+    argparser.add_argument('-v', '--version', action='version', version='%(prog)s {}'.format(__VERSION__))
     argparser.add_argument('--debug', action='store_true', help="Debug Mode")
     argparser.add_argument('--graylog-host', help="Graylog Host")
     argparser.add_argument('--graylog-port', default=12201, help="Graylog UDP Port(default: 12201)")

@@ -1,0 +1,31 @@
+[default.file.blacklist]
+
+# common files
+.git
+.svn
+.htaccess
+.htdigest
+.htpasswd
+.bashrc
+.zshrc
+.zsh_history
+.bash_histroy
+.bash_profile
+.python_history
+.mysql_history
+.rediscli_history
+id_ras
+id_ras.pub
+known_hosts
+authorized_keys
+nohup.out
+
+# system files
+/etc/passwd
+/etc/shadow
+/etc/hosts
+/var/log/nginx
+/var/log/apache2
+/proc
+/sys
+/home
