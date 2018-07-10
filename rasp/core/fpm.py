@@ -23,8 +23,8 @@ class FPM(object):
         """return version of php-fpm."""
 
         try:
-            output = check_output("php -v", shell=True).decode()
-            return 'v' + output.split("\n")[0][:5][-1]     # '5' / '7'
+            self.process_name = check_output("ps -q `pgrep -u root php-fpm` -o comm=", shell=True).decode().strip('\n')
+            return 'v' + self.process_name[7:8]     # '5' / '7'
         except CalledProcessError as e:
             return ''
 
@@ -32,7 +32,7 @@ class FPM(object):
         """return version of php-fpm."""
 
         try:
-            output = check_output("php -v", shell=True).decode()
+            output = check_output("{} -v".format(self.process_name), shell=True).decode()
             return output.split("\n")[0][4:10]
         except CalledProcessError as e:
             return ''
@@ -41,8 +41,7 @@ class FPM(object):
         """return php modules."""
 
         try:
-            short_version = self.full_version[:3]
-            cmd = "/usr/sbin/php-fpm{} -m".format(short_version)
+            cmd = "/usr/sbin/{} -m".format(self.process_name)
             output = check_output(cmd, shell=True).decode()
             output = output.split('\n\n')[0].split('\n')
             return list(filter(lambda x: x != '' and not x.startswith('['), output))
@@ -53,8 +52,7 @@ class FPM(object):
         """return disabled functions."""
 
         try:
-            short_version = self.full_version[:3]
-            cmd = "/usr/sbin/php-fpm{} -i | grep disable_function".format(short_version)
+            cmd = "/usr/sbin/{} -i | grep disable_function".format(self.process_name)
             output = check_output(cmd, shell=True).decode()
             output = output.split('=>')[1].strip().split(',')
             if 'no value' in output:
@@ -65,7 +63,6 @@ class FPM(object):
 
     def get_master(self):
         try:
-            check_output("pgrep -V", shell=True)
             output = check_output("pgrep -a php-fpm", shell=True).decode()
             return int(output.split()[0])
         except CalledProcessError as e:
@@ -73,7 +70,6 @@ class FPM(object):
 
     def get_current_workers(self):
         try:
-            check_output("pgrep -V", shell=True)
             output = check_output("pgrep php-fpm", shell=True).decode()
             return list(map(int, output.split()[1:]))
         except CalledProcessError as e:

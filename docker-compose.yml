@@ -23,6 +23,7 @@ services:
         container_name: rasp4php7
         volumes:
             - webroot:/usr/share/nginx/html
+            - .:/code:ro
         expose:
             - 9000
         cap_add:
@@ -36,6 +37,7 @@ services:
         container_name: rasp4php5
         volumes:
             - webroot:/usr/share/nginx/html
+            - .:/code:ro
         expose:
             - 9001
         cap_add:
