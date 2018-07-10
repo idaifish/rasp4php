@@ -1,6 +1,5 @@
 from __future__ import unicode_literals
-from sys import platform
-from os import geteuid
+from os import geteuid, uname
 from sys import exit
 
 from builtins import super
@@ -18,7 +17,7 @@ class Runtime(object):
 
     def __init__(self):
         self.environment = {}
-        self.environment['platform'] = platform
+        self.environment['platform'] = uname()[0]
 
         self.check_permission()
 
