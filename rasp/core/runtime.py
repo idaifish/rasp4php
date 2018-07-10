@@ -1,6 +1,9 @@
+from __future__ import unicode_literals
 from sys import platform
 from os import geteuid
 from sys import exit
+
+from builtins import super
 
 from rasp.core.log import logger
 

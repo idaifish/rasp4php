@@ -1,4 +1,10 @@
-from pathlib import Path
+from __future__ import unicode_literals
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
+
+from builtins import super
 
 from rasp.core.filter import AbstractFilter, FilterResult, FilterContext
 
@@ -21,7 +27,7 @@ class DefaultScriptFileFilter(AbstractFilter):
     def __init__(self, rule=None):
         super().__init__(rule)
 
-    def is_whitelisted(self, filename) -> bool:
+    def is_whitelisted(self, filename):
         if self.rule['default.script.whitelist']:
             for whitelisted_file in self.rule['default.script.whitelist']:
                 whitelisted_file = Path(whitelisted_file)
@@ -34,7 +40,7 @@ class DefaultScriptFileFilter(AbstractFilter):
 
         return False
 
-    def filter(self, message) -> FilterResult:
+    def filter(self, message):
         if 'filename' not in message or 'lineno' not in message:
             return FilterResult.DEFAULT
 

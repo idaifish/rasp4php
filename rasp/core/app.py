@@ -1,6 +1,9 @@
+from __future__ import unicode_literals
 import signal
 from sys import exit
 from threading import Event
+
+from builtins import object
 
 from rasp.core.log import logger
 from rasp.core.fpm import fpm
@@ -59,7 +62,7 @@ class Application(object):
         for worker_pid in self.environment['fpm_workers']:
             HookWorkerThread(worker_pid, hooks, self.detach_event).start()
 
-        notification_thread.join()
+        signal.pause()
 
     def start(self):
         self.bootstrap()

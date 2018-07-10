@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from configparser import ConfigParser
 from os.path import expanduser
 

@@ -1,5 +1,10 @@
+from __future__ import unicode_literals
+from future.standard_library import install_aliases
+install_aliases()
 from urllib.parse import urlparse
 from ipaddress import ip_address, ip_network
+
+from builtins import super
 
 from rasp.core.filter import AbstractFilter, FilterResult, FilterContext
 
@@ -86,25 +91,25 @@ class DefaultNetworkFilter(AbstractFilter):
 
         return ip
 
-    def is_whitelisted_domain(self, netloc) -> bool:
+    def is_whitelisted_domain(self, netloc):
         if self.rule['default.network.whitelist.domain']:
             return any([d in netloc for d in self.rule['default.network.whitelist.domain']])
         else:
             return False
 
-    def is_whitelisted_ip(self, netloc) -> bool:
+    def is_whitelisted_ip(self, netloc):
         if self.rule['default.network.whitelist.ip']:
             return any([ip_network(netloc, strict=False) in ip_network(ip, strict=False) for ip in self.rule['default.network.whitelist.ip']])
         else:
             return False
 
-    def is_blacklisted_domain(self, netloc) -> bool:
+    def is_blacklisted_domain(self, netloc):
         if self.rule['default.network.blacklist.domain']:
             return any([d in netloc for d in self.rule['default.network.blacklist.domain']])
         else:
             return False
 
-    def is_blacklisted_ip(self, netloc) -> bool:
+    def is_blacklisted_ip(self, netloc):
         if self.rule['default.network.blacklist.ip']:
             return any([ip_network(netloc, strict=False) in ip_network(ip, strict=False) for ip in self.rule['default.network.blacklist.ip']])
         else:

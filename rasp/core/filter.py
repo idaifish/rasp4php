@@ -1,8 +1,10 @@
-import importlib.util
+from __future__ import unicode_literals
 import inspect
 from enum import Enum
 from collections import defaultdict
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
+
+from future.utils import with_metaclass
 
 from rasp.core.log import logger
 from rasp.core.rule import RuleManager
@@ -30,19 +32,19 @@ class FilterContext(Enum):
     ANY = "any"
 
 
-class AbstractFilter(ABC):
+class AbstractFilter(with_metaclass(ABCMeta)):
     """Base class for creating a filter."""
 
     name = 'AbstractFilter'
     context = FilterContext.ANY
     rule_entries = ()            # Section name in the rule file
 
-    def __init__(self, rule: dict=None):
+    def __init__(self, rule=None):
         self.rule = rule
         logger.info("Filter '{}' is loaded.".format(self.name))
 
     @abstractmethod
-    def filter(self, message) -> FilterResult:
+    def filter(self, message):
         return FilterResult.DEFAULT
 
 
@@ -63,9 +65,16 @@ class FilterManager(object):
 
         for filter_path in filter_paths:
             for filter_file in filter_path.resolve().rglob('*.py'):
-                spec = importlib.util.spec_from_file_location(filter_file.stem, filter_file.as_posix())
-                module = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(module)
+                try:
+                    # Python3
+                    import importlib.util
+                    spec = importlib.util.spec_from_file_location(filter_file.stem, filter_file.as_posix())
+                    module = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(module)
+                except ImportError:
+                    # Python2
+                    import imp
+                    module = imp.load_source(filter_file.stem, filter_file.as_posix())
 
                 for member_name, member_obj in inspect.getmembers(module):
                     if inspect.isclass(member_obj) \
@@ -75,17 +84,17 @@ class FilterManager(object):
                         filter_instance = self.init_filter(filter_class)
                         self.filters[filter_instance.context].append(filter_instance)
 
-    def get_filters(self, context: FilterContext) -> list:
+    def get_filters(self, context):
         return self.filters[FilterContext.ANY] + self.filters[context]
 
-    def init_filter(self, filter_class: AbstractFilter):
+    def init_filter(self, filter_class):
         rule = {}
         for entry in filter_class.rule_entries:
             rule[entry] = self.rule_manager.get_rule(entry)
 
         return filter_class(rule)
 
-    def filter(self, message) -> bool:
+    def filter(self, message):
         try:
             filters = self.get_filters(FilterContext(message['context']))
             result = [filter.filter(message).value for filter in filters]

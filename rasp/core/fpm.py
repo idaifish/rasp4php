@@ -1,4 +1,7 @@
+from __future__ import unicode_literals
 from subprocess import check_output, CalledProcessError
+
+from builtins import super, object
 
 
 class FPM(object):

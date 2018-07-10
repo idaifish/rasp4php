@@ -1,4 +1,9 @@
+from __future__ import unicode_literals
+from future.standard_library import install_aliases
+install_aliases()
 from urllib.parse import urlparse
+
+from builtins import super
 
 from rasp.core.filter import AbstractFilter, FilterResult, FilterContext
 
@@ -23,10 +28,10 @@ class DefaultFileFilter(AbstractFilter):
         'default.file.blacklist',
     )
 
-    def __init__(self, rule: dict=None):
+    def __init__(self, rule=None):
         super().__init__(rule)
 
-    def is_whitelisted(self, filename) -> bool:
+    def is_whitelisted(self, filename):
         if self.rule['default.file.whitelist']:
             for f in self.rule['default.file.whitelist']:
                 if f in filename:
@@ -34,7 +39,7 @@ class DefaultFileFilter(AbstractFilter):
 
         return False
 
-    def is_blacklisted(self, filename) -> bool:
+    def is_blacklisted(self, filename):
         if self.rule['default.file.blacklist']:
             for f in self.rule['default.file.blacklist']:
                 if f in filename:
@@ -42,7 +47,7 @@ class DefaultFileFilter(AbstractFilter):
 
         return False
 
-    def has_suspicious_scheme(self, filename) -> bool:
+    def has_suspicious_scheme(self, filename):
         urlparsed_result = urlparse(filename)
 
         if urlparsed_result.scheme in ('data', 'php', 'expect'):
@@ -50,7 +55,7 @@ class DefaultFileFilter(AbstractFilter):
 
         return False
 
-    def has_file_scheme(self, filename) -> bool:
+    def has_file_scheme(self, filename):
         urlparsed_result = urlparse(filename)
 
         if urlparsed_result.scheme in ('', 'file'):

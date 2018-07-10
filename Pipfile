@@ -10,6 +10,11 @@ frida = "*"
 coloredlogs = "*"
 graypy = "*"
 redis = "*"
+future = "*"
+"enum34" = "*"
+configparser = "*"
+ipaddress = "*"
+"pathlib2" = "*"
 
 [scripts]
 rasp = 'python rasp-cli'

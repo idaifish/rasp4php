@@ -1,7 +1,9 @@
+from __future__ import unicode_literals
 from threading import Thread, Lock
 from json import dumps
 
 import frida
+from builtins import super
 
 from rasp.core.message import message_queue
 from rasp.core.log import logger

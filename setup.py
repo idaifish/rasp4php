@@ -8,7 +8,6 @@ setup(
     keywords=('rasp', 'php', 'rasp4php', 'siem'),
     description='Runtime Application Self-Protection for PHP',
     url='https://github.com/idaifish/rasp4php',
-    python_requires='>=3',
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
@@ -16,6 +15,11 @@ setup(
         'coloredlogs',
         'graypy',
         'redis',
+        'future',
+        'pathlib2',
+        'enum34',
+        'configparser',
+        'ipaddress',
     ],
     scripts=('rasp-cli', ),
     author='idaifish',
@@ -26,6 +30,8 @@ setup(
 
         'License :: OSI Approved :: MIT License',
 
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
