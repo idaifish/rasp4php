@@ -1,4 +1,4 @@
-# RASP4PHP   ![license](https://img.shields.io/github/license/idaifish/rasp4php.svg)
+# RASP4PHP   ![license](https://img.shields.io/github/license/idaifish/rasp4php.svg) [![Build Status](https://travis-ci.com/idaifish/rasp4php.svg?branch=master)](https://travis-ci.com/idaifish/rasp4php)
 
 Runtime Application Self-Protection for PHP, based on [Frida](https://www.frida.re), mostly used as a sensor for SIEM.
 
